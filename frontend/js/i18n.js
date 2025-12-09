@@ -1,0 +1,328 @@
+/**
+ * Internationalization (i18n) Module
+ * Supports Chinese and English language switching
+ */
+
+const i18n = {
+    // Current language
+    currentLang: 'en',
+    
+    // Translation dictionary
+    translations: {
+        zh: {
+            // Page title
+            pageTitle: 'comic-perfect',
+            
+            // Main header
+            appName: 'ComicPerfect',
+            configBtn: '⚙️ 配置',
+            themeBtnLight: '切换到深色模式',
+            themeBtnDark: '切换到浅色模式',
+            
+            // Configuration panel
+            configTitle: '环境变量配置',
+            apiKeyLabel: 'OpenAI API Key',
+            apiKeyPlaceholder: '输入你的 OpenAI API Key',
+            googleApiKeyLabel: 'Google API Key',
+            googleApiKeyPlaceholder: '输入你的 Google API Key (用于图片生成)',
+            baseUrlLabel: 'Base URL',
+            baseUrlPlaceholder: 'https://api.openai.com/v1',
+            modelLabel: 'Model',
+            customModelLabel: '自定义模型名称',
+            customModelPlaceholder: '输入模型名称',
+            saveConfigBtn: '💾 保存配置',
+            
+            // AI generation section
+            promptPlaceholder: '描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事',
+            pageCountLabel: '生成页数:',
+            comicStyleLabel: '漫画风格:',
+            comicLanguageLabel: '漫画语言:',
+            generateBtn: '✨ AI 生成多页分镜',
+            generating: '生成中...',
+            
+            // Comic styles
+            styleDoraemon: '哆啦A梦风格',
+            styleAmerican: '美式漫画风格',
+            styleWatercolor: '水彩风格',
+            styleDisney: '迪士尼动画风格',
+            styleGhibli: '宫崎骏/吉卜力风格',
+            stylePixar: '皮克斯动画风格',
+            styleShonen: '日本少年漫画风格',
+            
+            // Comic languages
+            langZh: '中文',
+            langEn: 'English',
+            langJa: '日本語',
+            
+            // Page navigation
+            prevBtn: '←',
+            nextBtn: '→',
+            pageIndicator: '第 {current}/{total} 页',
+            
+            // Action buttons
+            generateCurrentBtn: '🎨 生成当前页漫画',
+            generateAllBtn: '🎨 生成所有页漫画',
+            xiaohongshuBtn: '📱 生成小红书内容',
+            
+            // Edit hint
+            editHint: '💡 点击任意面板可直接编辑内容',
+            
+            // Status messages
+            statusGenerating: '正在调用 {model}...',
+            statusSuccess: '✓ 生成成功！共{count}页',
+            statusError: '✗ 生成失败: {error}',
+            statusPreparing: '正在准备草图...',
+            statusGeneratingImage: '正在生成最终漫画图片...',
+            statusImageSuccess: '✓ 图片生成成功！',
+            statusGeneratingPage: '正在生成第 {current}/{total} 页...',
+            statusAllSuccess: '✓ 所有 {total} 页生成成功！',
+            statusXiaohongshu: '正在生成小红书内容...',
+            statusXiaohongshuSuccess: '✓ 小红书内容生成成功！',
+            
+            // Alerts
+            alertNoApiKey: '请输入 OpenAI API Key',
+            alertNoGoogleApiKey: '请在配置中输入 Google API Key',
+            alertNoPrompt: '请描述你想要的漫画内容',
+            alertConfigSaved: '✓ 配置已保存',
+            alertConfigFailed: '配置保存失败',
+            alertNoBaseUrl: '请输入 Base URL',
+            alertNoCustomModel: '请输入自定义模型名称',
+            alertNoPageData: '没有可生成的页面数据',
+            alertNoPages: '没有可生成的页面',
+            alertGenerateAll: '将生成所有 {total} 页漫画，这可能需要一些时间。是否继续？',
+            alertBatchError: '生成过程中出错，但已成功生成 {success}/{total} 页。\n错误: {error}',
+            alertBatchFailed: '批量生成失败: {error}',
+            alertNoComicData: '请先生成漫画内容',
+            alertDownloadFailed: '下载失败，请右键点击图片另存为',
+            alertDownloadAlt: '无法自动下载，请在新窗口中右键点击图片另存为',
+            alertCopyFailed: '复制失败，请手动复制',
+            
+            // Error messages
+            errorJsonFormat: 'JSON 格式错误',
+            errorGenerationFailed: 'AI 生成失败: {error}\n\n提示：\n1. 请确保后端服务已启动 (python backend/app.py)\n2. 检查 Base URL 是否正确配置',
+            errorImageFailed: '图片生成失败: {error}\n\n提示：请确保后端服务已启动',
+            
+            // Modal titles
+            modalGeneratedTitle: '生成完成 - 共 {count} 页',
+            modalXiaohongshuTitle: '📱 小红书内容',
+            modalTitleLabel: '标题：',
+            modalContentLabel: '正文：',
+            modalTagsLabel: '标签：',
+            
+            // Modal buttons
+            btnDownloadThis: '下载此页',
+            btnDownloadAll: '下载所有图片',
+            btnDownloading: '下载中...',
+            btnClose: '关闭',
+            btnCopyAll: '📋 复制全部',
+            btnCopied: '✓ 已复制',
+            btnDownloadImage: '下载图片',
+            
+            // Language switcher
+            languageLabel: '语言 / Language',
+        },
+        
+        en: {
+            // Page title
+            pageTitle: 'comic-perfect',
+            
+            // Main header
+            appName: 'ComicPerfect',
+            configBtn: '⚙️ Config',
+            themeBtnLight: 'Switch to dark mode',
+            themeBtnDark: 'Switch to light mode',
+            
+            // Configuration panel
+            configTitle: 'Environment Configuration',
+            apiKeyLabel: 'OpenAI API Key',
+            apiKeyPlaceholder: 'Enter your OpenAI API Key',
+            googleApiKeyLabel: 'Google API Key',
+            googleApiKeyPlaceholder: 'Enter your Google API Key (for image generation)',
+            baseUrlLabel: 'Base URL',
+            baseUrlPlaceholder: 'https://api.openai.com/v1',
+            modelLabel: 'Model',
+            customModelLabel: 'Custom Model Name',
+            customModelPlaceholder: 'Enter model name',
+            saveConfigBtn: '💾 Save Config',
+            
+            // AI generation section
+            promptPlaceholder: 'Describe the comic you want, e.g.: Generate a story about Xiao Ming learning programming',
+            pageCountLabel: 'Pages:',
+            comicStyleLabel: 'Comic Style:',
+            comicLanguageLabel: 'Comic Language:',
+            generateBtn: '✨ Generate Comic',
+            generating: 'Generating...',
+            
+            // Comic styles
+            styleDoraemon: 'Doraemon Style',
+            styleAmerican: 'American Comic Style',
+            styleWatercolor: 'Watercolor Style',
+            styleDisney: 'Disney Animation Style',
+            styleGhibli: 'Ghibli/Miyazaki Style',
+            stylePixar: 'Pixar Animation Style',
+            styleShonen: 'Japanese Shonen Manga Style',
+            
+            // Comic languages
+            langZh: '中文',
+            langEn: 'English',
+            langJa: '日本語',
+            
+            // Page navigation
+            prevBtn: '←',
+            nextBtn: '→',
+            pageIndicator: 'Page {current}/{total}',
+            
+            // Action buttons
+            generateCurrentBtn: '🎨 Generate Current Page',
+            generateAllBtn: '🎨 Generate All Pages',
+            xiaohongshuBtn: '📱 Generate Xiaohongshu Post',
+            
+            // Edit hint
+            editHint: '💡 Click any panel to edit content directly',
+            
+            // Status messages
+            statusGenerating: 'Calling {model}...',
+            statusSuccess: '✓ Generated successfully! {count} pages',
+            statusError: '✗ Generation failed: {error}',
+            statusPreparing: 'Preparing sketch...',
+            statusGeneratingImage: 'Generating final comic image...',
+            statusImageSuccess: '✓ Image generated successfully!',
+            statusGeneratingPage: 'Generating page {current}/{total}...',
+            statusAllSuccess: '✓ All {total} pages generated successfully!',
+            statusXiaohongshu: 'Generating Xiaohongshu content...',
+            statusXiaohongshuSuccess: '✓ Xiaohongshu content generated successfully!',
+            
+            // Alerts
+            alertNoApiKey: 'Please enter OpenAI API Key',
+            alertNoGoogleApiKey: 'Please enter Google API Key in settings',
+            alertNoPrompt: 'Please describe the comic you want',
+            alertConfigSaved: '✓ Configuration saved',
+            alertConfigFailed: 'Configuration save failed',
+            alertNoBaseUrl: 'Please enter Base URL',
+            alertNoCustomModel: 'Please enter custom model name',
+            alertNoPageData: 'No page data to generate',
+            alertNoPages: 'No pages to generate',
+            alertGenerateAll: 'Will generate all {total} pages, this may take some time. Continue?',
+            alertBatchError: 'Error occurred during generation, but successfully generated {success}/{total} pages.\nError: {error}',
+            alertBatchFailed: 'Batch generation failed: {error}',
+            alertNoComicData: 'Please generate comic content first',
+            alertDownloadFailed: 'Download failed, please right-click and save image',
+            alertDownloadAlt: 'Cannot auto-download, please right-click and save image in new window',
+            alertCopyFailed: 'Copy failed, please copy manually',
+            
+            // Error messages
+            errorJsonFormat: 'JSON format error',
+            errorGenerationFailed: 'AI generation failed: {error}\n\nTips:\n1. Make sure backend service is running (python backend/app.py)\n2. Check if Base URL is configured correctly',
+            errorImageFailed: 'Image generation failed: {error}\n\nTip: Please make sure backend service is running',
+            
+            // Modal titles
+            modalGeneratedTitle: 'Generated - {count} pages',
+            modalXiaohongshuTitle: '📱 Xiaohongshu Content',
+            modalTitleLabel: 'Title:',
+            modalContentLabel: 'Content:',
+            modalTagsLabel: 'Tags:',
+            
+            // Modal buttons
+            btnDownloadThis: 'Download This',
+            btnDownloadAll: 'Download All',
+            btnDownloading: 'Downloading...',
+            btnClose: 'Close',
+            btnCopyAll: '📋 Copy All',
+            btnCopied: '✓ Copied',
+            btnDownloadImage: 'Download Image',
+            
+            // Language switcher
+            languageLabel: 'Language / 语言',
+        }
+    },
+    
+    /**
+     * Initialize i18n with saved language preference
+     */
+    init() {
+        const savedLang = localStorage.getItem('comic-perfect-lang') || 'en';
+        this.setLanguage(savedLang);
+    },
+    
+    /**
+     * Get translation for a key
+     * @param {string} key - Translation key
+     * @param {Object} params - Parameters to replace in translation
+     * @returns {string} Translated text
+     */
+    t(key, params = {}) {
+        let text = this.translations[this.currentLang][key] || key;
+        
+        // Replace parameters
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    /**
+     * Set current language
+     * @param {string} lang - Language code ('zh' or 'en')
+     */
+    setLanguage(lang) {
+        if (!this.translations[lang]) {
+            console.warn(`Language ${lang} not supported, falling back to en`);
+            lang = 'en';
+        }
+        
+        this.currentLang = lang;
+        localStorage.setItem('comic-perfect-lang', lang);
+        this.updateUI();
+    },
+    
+    /**
+     * Get current language
+     * @returns {string} Current language code
+     */
+    getLanguage() {
+        return this.currentLang;
+    },
+    
+    /**
+     * Update all UI text elements
+     */
+    updateUI() {
+        // Update page title
+        document.title = this.t('pageTitle');
+        
+        // Update all elements with data-i18n attribute
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = element.getAttribute('data-i18n-params');
+            
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.placeholder = this.t(key, params ? JSON.parse(params) : {});
+            } else if (element.tagName === 'OPTION') {
+                element.textContent = this.t(key);
+            } else {
+                element.innerHTML = this.t(key, params ? JSON.parse(params) : {});
+            }
+        });
+
+        // Update elements with data-i18n-tooltip attribute
+        document.querySelectorAll('[data-i18n-tooltip]').forEach(element => {
+            const key = element.getAttribute('data-i18n-tooltip');
+            const params = element.getAttribute('data-i18n-params');
+            element.setAttribute('data-tooltip', this.t(key, params ? JSON.parse(params) : {}));
+        });
+        
+        // Trigger custom event for components that need to update
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: this.currentLang } }));
+        
+        // Update theme button title if theme manager exists
+        if (window.themeManager) {
+            window.themeManager.updateThemeButton();
+        }
+    }
+};
+
+// Initialize on load
+if (typeof window !== 'undefined') {
+    window.i18n = i18n;
+}

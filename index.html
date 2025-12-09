@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>comic-perfect</title>
+    <link rel="stylesheet" href="frontend/css/style.css">
+</head>
+<body>
+
+    <!-- Left Editor Container -->
+    <div class="editor-container">
+        <div class="header-row">
+            <h3 data-i18n="appName">ComicPerfect</h3>
+            <div class="header-buttons">
+                <button onclick="toggleTheme()" class="theme-btn" id="theme-btn" title="Toggle theme">
+                    <span class="theme-icon">☀️</span>
+                </button>
+                <select id="language-select" class="language-select" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                </select>
+                <button onclick="toggleConfig()" class="settings-btn" data-i18n="configBtn">⚙️ 配置</button>
+            </div>
+        </div>
+        
+        <!-- Configuration Panel -->
+        <div id="config-panel" class="config-panel">
+            <h4 data-i18n="configTitle">环境变量配置</h4>
+            <div class="flex-col">
+                <div>
+                    <label data-i18n="apiKeyLabel">OpenAI API Key</label>
+                    <input type="password" id="api-key" data-i18n="apiKeyPlaceholder" placeholder="输入你的 OpenAI API Key">
+                </div>
+                <div>
+                    <label data-i18n="googleApiKeyLabel">Google API Key</label>
+                    <input type="password" id="google-api-key" data-i18n="googleApiKeyPlaceholder" placeholder="输入你的 Google API Key (用于图片生成)">
+                </div>
+                <div>
+                    <label data-i18n="baseUrlLabel">Base URL</label>
+                    <input type="text" id="base-url" data-i18n="baseUrlPlaceholder" placeholder="https://api.openai.com/v1">
+                </div>
+                <div>
+                    <label data-i18n="modelLabel">Model</label>
+                    <select id="model-select">
+                        <option value="gpt-4o-mini">gpt-4o-mini</option>
+                        <option value="gpt-4o">gpt-4o</option>
+                        <option value="gpt-4-turbo">gpt-4-turbo</option>
+                        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                        <option value="custom" data-i18n="customModelLabel">自定义模型</option>
+                    </select>
+                </div>
+                <div id="custom-model-input" style="display: none;">
+                    <label data-i18n="customModelLabel">自定义模型名称</label>
+                    <input type="text" id="custom-model" data-i18n="customModelPlaceholder" placeholder="输入模型名称">
+                </div>
+                <button onclick="saveConfig()" class="save-config-btn" data-i18n="saveConfigBtn">💾 保存配置</button>
+            </div>
+        </div>
+        
+        <!-- AI Generation Section -->
+        <div class="ai-section">
+            <div class="flex-row">
+                <label style="white-space: nowrap;" data-i18n="pageCountLabel">生成页数:</label>
+                <input type="number" id="page-count" value="3" min="1" max="10" style="flex: 1;">
+            </div>
+            <div class="flex-row">
+                <label style="white-space: nowrap;" data-i18n="comicStyleLabel">漫画风格:</label>
+                <select id="comic-style" style="flex: 1;">
+                    <option value="doraemon" data-i18n="styleDoraemon">哆啦A梦风格</option>
+                    <option value="american" data-i18n="styleAmerican">美式漫画风格</option>
+                    <option value="watercolor" data-i18n="styleWatercolor">水彩风格</option>
+                    <option value="disney" data-i18n="styleDisney">迪士尼动画风格</option>
+                    <option value="ghibli" data-i18n="styleGhibli">宫崎骏/吉卜力风格</option>
+                    <option value="pixar" data-i18n="stylePixar">皮克斯动画风格</option>
+                    <option value="shonen" data-i18n="styleShonen">日本少年漫画风格</option>
+                </select>
+            </div>
+            <div class="flex-row">
+                <label style="white-space: nowrap;" data-i18n="comicLanguageLabel">漫画语言:</label>
+                <select id="comic-language" style="flex: 1;">
+                    <option value="en" data-i18n="langEn">English</option>
+                    <option value="zh" data-i18n="langZh">中文</option>
+                    <option value="ja" data-i18n="langJa">日本語</option>
+                </select>
+            </div>
+            <div id="ai-status"></div>
+        </div>
+        
+        <h3 style="display: none;">分镜脚本 (JSON)
+            <span id="page-indicator"></span>
+        </h3>
+        
+        <div id="error-msg" class="error" style="display: none;" data-i18n="errorJsonFormat">JSON 格式错误</div>
+        
+        <textarea id="json-input" style="display: none;"></textarea>
+    </div>
+
+    <!-- Right Preview Container -->
+    <div class="preview-container">
+        <div class="edit-hint" data-i18n="editHint" style="display: none;">💡 点击任意面板可直接编辑内容</div>
+        <div id="comic-page" style="display: none;">
+            <!-- Content will be inserted here by JavaScript -->
+        </div>
+        <!-- Page Navigation -->
+        <div id="page-nav" class="page-nav">
+            <button onclick="prevPage()" id="prev-btn" class="nav-btn" title="Previous Page">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button onclick="nextPage()" id="next-btn" class="nav-btn" title="Next Page">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons" id="action-buttons" style="display: none;">
+            <button class="download-btn" onclick="generateFinalImage()" data-i18n-tooltip="generateCurrentBtn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                    <path d="M21 15L16 10L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="download-btn" onclick="generateAllPagesImages()" id="generate-all-btn" style="display: none;" data-i18n-tooltip="generateAllBtn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <rect x="8" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M8 12H16M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button class="xiaohongshu-btn" onclick="generateXiaohongshuContent()" id="xiaohongshu-btn" style="display: none;" data-i18n-tooltip="xiaohongshuBtn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4H20C20.5523 4 21 4.44772 21 5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V5C3 4.44772 3.44772 4 4 4Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M7 8H17M7 12H17M7 16H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Prompt Input Section - Fixed at Bottom -->
+    <div class="prompt-section-fixed">
+        <div class="prompt-wrapper">
+            <textarea id="prompt-input" data-i18n="promptPlaceholder" placeholder="描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事"></textarea>
+            <button onclick="generateWithAI()" class="run-btn" id="run-btn" title="Run">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <!-- Application Modules -->
+    <script src="frontend/js/i18n.js?v=3"></script>
+    <script src="frontend/js/theme.js?v=1"></script>
+    <script src="frontend/js/config.js?v=2"></script>
+    <script src="frontend/js/api.js?v=2"></script>
+    <script src="frontend/js/renderer.js?v=2"></script>
+    <script src="frontend/js/pageManager.js?v=2"></script>
+    <script src="frontend/js/exporter.js?v=2"></script>
+    <script src="frontend/js/app.js?v=3"></script>
+</body>
+</html>
