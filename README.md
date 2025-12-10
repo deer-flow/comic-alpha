@@ -1,131 +1,138 @@
-# 漫画分镜生成器
+# 🎨 Comic Panel Generator
 
-一个基于 AI 的漫画分镜脚本生成工具，支持多页漫画生成和图片导出。
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 项目架构
+[English](./README.md) | [简体中文](./README_zh.md)
+
+> Originated from Open Source, give back to Open Source.
+
+An AI-based comic panel script generation tool that supports multi-page comic generation and image export.
+
+## Project Structure
 
 ```
 comic_alpha/
-├── backend/                    # 后端服务
-│   ├── app.py                 # Flask 应用主文件
-│   └── requirements.txt       # Python 依赖
-├── frontend/                   # 前端资源
+├── backend/                    # Backend service
+│   ├── app.py                 # Flask application main file
+│   └── requirements.txt       # Python dependencies
+├── frontend/                   # Frontend resources
 │   ├── css/
-│   │   └── style.css         # 样式文件
+│   │   └── style.css         # Style file
 │   └── js/
-│       ├── i18n.js           # 国际化模块
-│       ├── theme.js          # 主题管理模块
-│       ├── api.js            # API 调用模块
-│       ├── config.js         # 配置管理模块
-│       ├── renderer.js       # 渲染模块
-│       ├── pageManager.js    # 页面管理模块
-│       ├── exporter.js       # 图片导出模块
-│       └── app.js            # 主控制器
-├── index.html                 # 主页面
-└── comic.html                 # 旧版本（保留）
+│       ├── i18n.js           # Internationalization module
+│       ├── theme.js          # Theme management module
+│       ├── api.js            # API call module
+│       ├── config.js         # Configuration management module
+│       ├── renderer.js       # Rendering module
+│       ├── pageManager.js    # Page management module
+│       ├── exporter.js       # Image export module
+│       └── app.js            # Main controller
+├── index.html                 # Main page
+└── comic.html                 # Legacy version (preserved)
 ```
 
-## 技术栈
+## Tech Stack
 
-### 后端
+### Backend
 - **Python 3.8+**
-- **Flask**: Web 框架
-- **OpenAI API**: AI 生成能力
-- **Flask-CORS**: 跨域支持
+- **Flask**: Web framework
+- **OpenAI API**: AI generation capabilities
+- **Flask-CORS**: Cross-origin support
 
-### 前端
-- **原生 JavaScript**: 模块化设计
-- **HTML5 + CSS3**: 界面
-- **html2canvas**: 图片导出
+### Frontend
+- **Vanilla JavaScript**: Modular design
+- **HTML5 + CSS3**: Interface
+- **html2canvas**: Image export
 
-## 快速开始
+## Quick Start
 
-### 1. 安装后端依赖
+### 1. Install Backend Dependencies
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-### 2. 启动后端服务
+### 2. Start Backend Service
 
 ```bash
 python app.py
 ```
 
-后端服务将在 `http://localhost:5003` 启动。
+The backend service will start at `http://localhost:5003`.
 
-### 3. 打开前端页面
+### 3. Open Frontend Page
 
-在浏览器中打开 `index.html` 文件，或使用本地服务器：
+Open the `index.html` file in your browser, or use a local server:
 
 ```bash
-# 使用 Python 启动简单的 HTTP 服务器
+# Start a simple HTTP server using Python
 python -m http.server 8000
 ```
 
-然后访问 `http://localhost:8000`
+Then visit `http://localhost:8000`
 
-## 使用说明
+## Usage Guide
 
-### 界面设置
+### Interface Settings
 
-#### 主题切换
-- 点击右上角的 **🌙/☀️** 按钮可以在深色模式和浅色模式之间切换
-- 主题偏好会自动保存到本地存储
-- 如果未设置偏好，会自动跟随系统主题
+#### Theme Toggle
+- Click the **🌙/☀️** button in the top right corner to switch between dark mode and light mode
+- Theme preferences are automatically saved to local storage
+- If no preference is set, it will automatically follow the system theme
 
-#### 语言切换
-- 点击右上角的语言选择器可以在中文和英文之间切换
-- 支持的语言：中文（简体）、English
-- 语言偏好会自动保存
+#### Language Switch
+- Click the language selector in the top right corner to switch between Chinese and English
+- Supported languages: Chinese (Simplified), English
+- Language preferences are automatically saved
 
-### 配置 API
+### Configure API
 
-1. 点击右上角的 **⚙️ 配置** 按钮
-2. 输入 OpenAI API 的 Base URL（默认：`https://api.openai.com/v1`）
-3. 选择模型（推荐：`gpt-4o-mini`）
-4. 点击 **💾 保存配置**
+1. Click the **⚙️ Settings** button in the top right corner
+2. Enter the OpenAI API Base URL (default: `https://api.openai.com/v1`)
+3. Select a model (recommended: `gpt-4o-mini`)
+4. Click **💾 Save Configuration**
 
-### 生成漫画
+### Generate Comics
 
-1. 输入你的 OpenAI API Key
-2. 在文本框中描述你想要的漫画内容
-3. 设置生成页数（1-10页）
-4. 点击 **AI 生成多页分镜**
-5. 等待生成完成
+1. Enter your OpenAI API Key
+2. Describe the comic content you want in the text box
+3. Set the number of pages to generate (1-10 pages)
+4. Click **AI Generate Multi-page Panels**
+5. Wait for generation to complete
 
-### 编辑和导出
+### Edit and Export
 
-- 使用 **← 上一页** / **下一页 →** 按钮浏览多页漫画
-- 可以直接编辑 JSON 脚本，然后点击 **生成分镜** 重新渲染
-- 点击 **🎨 生成当前页漫画** 将草图转换为完整的漫画图片
-  - 自动捕获当前草图作为参考图片
-  - 生成的图片会保持草图的布局和构图
-- 点击 **🎨 生成所有页漫画** 批量生成所有页面的完整漫画
-  - 自动遍历所有页面，逐页生成完整漫画
-  - 智能使用前几页作为参考，保持角色和风格的一致性
-  - 生成完成后可以预览所有图片
-  - 支持单独下载或批量下载所有生成的图片
-- 点击 **📱 生成小红书内容** 自动生成适合小红书发布的内容（新功能！）
-  - 根据漫画内容自动生成吸引人的标题
-  - 生成200-500字的正文内容，包含emoji和分段
-  - 自动生成5-8个相关话题标签
-  - 支持一键复制全部内容
-- 点击 **下载当前页** 导出单页草图
-- 点击 **下载所有页面** 批量导出所有草图页面
+- Use the **← Previous Page** / **Next Page →** buttons to browse multi-page comics
+- You can directly edit the JSON script, then click **Generate Panels** to re-render
+- Click **🎨 Generate Current Page Comic** to convert the sketch into a complete comic image
+  - Automatically captures the current sketch as a reference image
+  - The generated image will maintain the layout and composition of the sketch
+- Click **🎨 Generate All Pages Comics** to batch generate complete comics for all pages
+  - Automatically iterates through all pages, generating complete comics page by page
+  - Intelligently uses previous pages as references to maintain character and style consistency
+  - After generation, you can preview all images
+  - Supports individual download or batch download of all generated images
+- Click **📱 Generate Xiaohongshu Content** to automatically generate content suitable for Xiaohongshu publishing (New Feature!)
+  - Automatically generates attractive titles based on comic content
+  - Generates 200-500 word body content with emojis and paragraphs
+  - Automatically generates 5-8 relevant topic tags
+  - Supports one-click copy of all content
+- Click **Download Current Page** to export a single page sketch
+- Click **Download All Pages** to batch export all sketch pages
 
-## API 文档
+## API Documentation
 
-### 后端 API
+### Backend API
 
-#### 1. 健康检查
+#### 1. Health Check
 
 ```
 GET /api/health
 ```
 
-响应：
+Response:
 ```json
 {
   "status": "ok",
@@ -133,24 +140,24 @@ GET /api/health
 }
 ```
 
-#### 2. 生成漫画脚本
+#### 2. Generate Comic Script
 
 ```
 POST /api/generate
 ```
 
-请求体：
+Request Body:
 ```json
 {
   "api_key": "your-openai-api-key",
-  "prompt": "描述漫画内容",
+  "prompt": "Describe comic content",
   "page_count": 3,
   "base_url": "https://api.openai.com/v1",
   "model": "gpt-4o-mini"
 }
 ```
 
-响应：
+Response:
 ```json
 {
   "success": true,
@@ -159,37 +166,37 @@ POST /api/generate
 }
 ```
 
-#### 3. 验证脚本格式
+#### 3. Validate Script Format
 
 ```
 POST /api/validate
 ```
 
-请求体：
+Request Body:
 ```json
 {
   "script": {...}
 }
 ```
 
-响应：
+Response:
 ```json
 {
   "valid": true
 }
 ```
 
-#### 4. 生成最终漫画图
+#### 4. Generate Final Comic Image
 
 ```
 POST /api/generate-image
 ```
 
-请求体：
+Request Body:
 ```json
 {
   "page_data": {
-    "title": "页面标题",
+    "title": "Page Title",
     "rows": [...]
   },
   "reference_img": "data:image/png;base64,...",
@@ -197,33 +204,33 @@ POST /api/generate-image
 }
 ```
 
-说明：
-- `reference_img` 会自动传入当前草图的base64数据
-- 生成的图片会参考草图的布局和构图
-- 支持base64格式和URL格式
+Notes:
+- `reference_img` will automatically pass the base64 data of the current sketch
+- The generated image will reference the layout and composition of the sketch
+- Supports base64 format and URL format
 
-响应：
+Response:
 ```json
 {
   "success": true,
-  "image_url": "生成的图片URL",
-  "prompt": "使用的提示词"
+  "image_url": "Generated image URL",
+  "prompt": "Prompt used"
 }
 ```
 
-#### 5. 生成小红书内容（新功能！）
+#### 5. Generate Xiaohongshu Content (New Feature!)
 
 ```
 POST /api/generate-xiaohongshu
 ```
 
-请求体：
+Request Body:
 ```json
 {
   "api_key": "your-openai-api-key",
   "comic_data": [
     {
-      "title": "第1页标题",
+      "title": "Page 1 Title",
       "rows": [...]
     }
   ],
@@ -232,123 +239,124 @@ POST /api/generate-xiaohongshu
 }
 ```
 
-说明：
-- `comic_data` 可以是单个页面对象或页面数组
-- 自动提取漫画内容并生成适合小红书的文案
-- 生成的内容包括标题、正文和标签
+Notes:
+- `comic_data` can be a single page object or an array of pages
+- Automatically extracts comic content and generates copy suitable for Xiaohongshu
+- Generated content includes title, body, and tags
 
-响应：
+Response:
 ```json
 {
   "success": true,
-  "title": "吸引人的标题 ✨",
-  "content": "正文内容，包含emoji和分段...",
-  "tags": ["漫画", "AI创作", "小红书", ...]
+  "title": "Attractive Title ✨",
+  "content": "Body content with emojis and paragraphs...",
+  "tags": ["comic", "AI creation", "Xiaohongshu", ...]
 }
 ```
 
-## 前端模块说明
+## Frontend Module Description
 
-### i18n.js - 国际化
-- 支持多语言切换（中文/英文）
-- 使用 localStorage 持久化语言偏好
-- 提供翻译函数和 UI 更新机制
+### i18n.js - Internationalization
+- Supports multi-language switching (Chinese/English)
+- Uses localStorage to persist language preferences
+- Provides translation functions and UI update mechanisms
 
-### theme.js - 主题管理
-- 支持深色/浅色模式切换
-- 自动检测系统主题偏好
-- 使用 localStorage 持久化主题设置
-- 平滑的主题切换动画
+### theme.js - Theme Management
+- Supports dark/light mode switching
+- Automatically detects system theme preferences
+- Uses localStorage to persist theme settings
+- Smooth theme transition animations
 
-### config.js - 配置管理
-- 管理用户配置（API Key, Base URL, Model）
-- 使用 localStorage 持久化存储
+### config.js - Configuration Management
+- Manages user configuration (API Key, Base URL, Model)
+- Uses localStorage for persistent storage
 
-### api.js - API 调用
-- 封装所有后端 API 调用
-- 统一错误处理
+### api.js - API Calls
+- Encapsulates all backend API calls
+- Unified error handling
 
-### renderer.js - 渲染引擎
-- 将 JSON 数据渲染为漫画分镜
-- 支持自定义样式
+### renderer.js - Rendering Engine
+- Renders JSON data into comic panels
+- Supports custom styles
 
-### pageManager.js - 页面管理
-- 管理多页漫画状态
-- 提供页面导航功能
+### pageManager.js - Page Management
+- Manages multi-page comic state
+- Provides page navigation functionality
 
-### exporter.js - 图片导出
-- 单页导出
-- 批量导出
-- 使用 html2canvas 生成高质量图片
+### exporter.js - Image Export
+- Single page export
+- Batch export
+- Uses html2canvas to generate high-quality images
 
-### app.js - 主控制器
-- 协调所有模块
-- 处理用户交互
-- 管理应用状态
+### app.js - Main Controller
+- Coordinates all modules
+- Handles user interactions
+- Manages application state
 
-## JSON 脚本格式
+## JSON Script Format
 
 ```json
 {
-  "title": "漫画标题",
+  "title": "Comic Title",
   "rows": [
     {
       "height": "180px",
       "panels": [
-        { "text": "分镜描述文字" },
-        { "text": "另一个分镜", "bg": "#f0f0f0" }
+        { "text": "Panel description text" },
+        { "text": "Another panel", "bg": "#f0f0f0" }
       ]
     }
   ]
 }
 ```
 
-### 字段说明
+### Field Description
 
-- `title`: 页面标题（可选）
-- `rows`: 分镜行数组
-  - `height`: 行高（默认 150px）
-  - `panels`: 面板数组
-    - `text`: 分镜描述文字
-    - `bg`: 背景色（可选）
+- `title`: Page title (optional)
+- `rows`: Array of panel rows
+  - `height`: Row height (default 150px)
+  - `panels`: Array of panels
+    - `text`: Panel description text
+    - `bg`: Background color (optional)
 
-## 开发指南
+## Development Guide
 
-### 添加新功能
+### Adding New Features
 
-1. **后端功能**: 在 `backend/app.py` 中添加新的路由
-2. **前端 API**: 在 `frontend/js/api.js` 中添加对应的调用方法
-3. **UI 交互**: 在 `frontend/js/app.js` 中添加控制逻辑
+1. **Backend Features**: Add new routes in `backend/app.py`
+2. **Frontend API**: Add corresponding call methods in `frontend/js/api.js`
+3. **UI Interactions**: Add control logic in `frontend/js/app.js`
 
-### 自定义样式
+### Customizing Styles
 
-编辑 `frontend/css/style.css` 文件来修改界面样式。
+Edit the `frontend/css/style.css` file to modify the interface styles.
 
-### 扩展渲染器
+### Extending the Renderer
 
-在 `frontend/js/renderer.js` 中修改 `_createPanel` 方法来支持更多面板样式。
+Modify the `_createPanel` method in `frontend/js/renderer.js` to support more panel styles.
 
-## 常见问题
+## FAQ
 
-### Q: 生成失败，提示 "Failed to fetch"
-A: 请确保后端服务已启动（`python backend/app.py`），并检查 Base URL 配置是否正确。
+### Q: Generation failed, showing "Failed to fetch"
+A: Make sure the backend service is running (`python backend/app.py`), and check if the Base URL configuration is correct.
 
-### Q: 如何使用自定义模型？
-A: 在配置面板中选择"自定义模型"，然后输入模型名称（如 `claude-3-opus`）。
+### Q: How to use a custom model?
+A: Select "Custom Model" in the configuration panel, then enter the model name (e.g., `kimi-k2`).
 
-### Q: 图片导出失败
-A: 确保已加载 html2canvas 库，检查浏览器控制台是否有错误信息。
+### Q: Image export failed
+A: Make sure the html2canvas library is loaded, and check the browser console for error messages.
 
-### Q: 如何部署到生产环境？
+### Q: How to deploy to production?
 A: 
-1. 后端使用 Gunicorn 或 uWSGI 部署
-2. 前端使用 Nginx 或其他 Web 服务器托管
-3. 配置 CORS 允许前端域名访问后端
+1. Deploy the backend using Gunicorn or uWSGI
+2. Host the frontend using Nginx or another web server
+3. Configure CORS to allow the frontend domain to access the backend
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
+
