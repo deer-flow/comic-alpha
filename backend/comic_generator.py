@@ -84,7 +84,7 @@ def generate_social_media_image_core(
                 model=MODEL_ID,
                 contents=contents,
                 config=GenerateContentConfig(
-                    response_modalities=['IMAGE', 'TEXT'],
+                    response_modalities=['TEXT', 'IMAGE'],
                     image_config=ImageConfig(
                         aspect_ratio=aspect_ratio,
                         image_size=image_size,

@@ -102,6 +102,9 @@ class ImageService:
 - The comic title should use a {comic_style} font.
 - The image should be colorful and vibrant.
 - Do not show panel index in the content.
+- Include speech bubbles with short, clear dialogue to help tell the story.
+- Keep dialogue concise to avoid cluttering the image.
+- Ensure text is legible and spelled correctly.
 
 # Content:
 
