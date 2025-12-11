@@ -402,6 +402,8 @@ input::placeholder {
 #comic-page {
     width: 600px;
     min-height: auto;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
     background: var(--panel-bg);
     border: none;
     padding: 24px;
@@ -411,6 +413,23 @@ input::placeholder {
     flex-direction: column;
     gap: 14px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#comic-page::-webkit-scrollbar {
+    width: 6px;
+}
+
+#comic-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#comic-page::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+
+#comic-page::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
 }
 
 /* Comic Title */
