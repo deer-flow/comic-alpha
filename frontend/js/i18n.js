@@ -16,8 +16,10 @@ const i18n = {
             // Main header
             appName: 'ComicPerfect',
             configBtn: '⚙️ 配置',
-            themeBtnLight: '切换到深色模式',
-            themeBtnDark: '切换到浅色模式',
+            themeLabel: '主题',
+            themeBtnLight: '浅色',
+            themeBtnDark: '深色',
+            languageLabelShort: '语言',
 
             // Configuration panel
             configTitle: '环境变量配置',
@@ -62,7 +64,15 @@ const i18n = {
             // Action buttons
             generateCurrentBtn: '🎨 生成当前页漫画',
             generateAllBtn: '🎨 生成所有页漫画',
+            generateAllText: '生成全部',
+            renderThisPage: '渲染本页',
             xiaohongshuBtn: '📱 生成小红书内容',
+
+            // Export dropdown
+            exportBtn: '导出',
+            exportText: '导出',
+            xiaohongshuMenuItem: '生成社媒文案',
+            socialMediaContent: '生成社媒文案',
 
             // Edit hint
             editHint: '💡 点击任意面板可直接编辑内容',
@@ -132,8 +142,10 @@ const i18n = {
             // Main header
             appName: 'ComicPerfect',
             configBtn: '⚙️ Config',
-            themeBtnLight: 'Switch to dark mode',
-            themeBtnDark: 'Switch to light mode',
+            themeLabel: 'Theme',
+            themeBtnLight: 'Light',
+            themeBtnDark: 'Dark',
+            languageLabelShort: 'Language',
 
             // Configuration panel
             configTitle: 'Environment Configuration',
@@ -178,7 +190,15 @@ const i18n = {
             // Action buttons
             generateCurrentBtn: '🎨 Generate Current Page',
             generateAllBtn: '🎨 Generate All Pages',
+            generateAllText: 'Generate All',
+            renderThisPage: 'Render Page',
             xiaohongshuBtn: '📱 Generate Twitter Post',
+
+            // Export dropdown
+            exportBtn: 'Export',
+            exportText: 'Export',
+            xiaohongshuMenuItem: 'Generate Social Post',
+            socialMediaContent: 'Generate Social Post',
 
             // Edit hint
             editHint: '💡 Click any panel to edit content directly',

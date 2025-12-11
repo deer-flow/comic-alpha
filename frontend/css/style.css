@@ -119,7 +119,7 @@ body {
 
 .header-buttons {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
     flex-shrink: 0;
 }
@@ -130,6 +130,37 @@ body {
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.5px;
+    flex-shrink: 0;
+}
+
+/* Icon Button - Minimal Style */
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0 !important;
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: var(--ai-section-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    transform: none;
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+.icon-btn svg {
     flex-shrink: 0;
 }
 
@@ -345,6 +376,7 @@ input::placeholder {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -474,6 +506,55 @@ input::placeholder {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
+}
+
+/* Config Panel Inline Layout */
+.config-row-inline {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.config-item-half {
+    flex: 1;
+}
+
+/* Theme Toggle Button in Config Panel */
+.theme-toggle-btn {
+    width: 100%;
+    padding: 10px 14px !important;
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--ai-section-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.theme-toggle-btn .theme-icon {
+    font-size: 16px;
+}
+
+/* Language Select in Config Panel */
+.config-panel .language-select {
+    width: 100%;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    height: auto;
+    min-width: unset;
 }
 
 /* General label styles */
@@ -828,6 +909,208 @@ label {
     background: linear-gradient(135deg, #e01e3a, #c41a33) !important;
 }
 
+/* ========================================
+   Export Dropdown Styles
+   ======================================== */
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-btn {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    height: 32px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.export-btn:hover {
+    background: var(--ai-section-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    transform: none;
+}
+
+.export-btn .dropdown-arrow {
+    transition: transform 0.2s ease;
+}
+
+.export-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.export-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--container-shadow);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1000;
+    overflow: hidden;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.export-dropdown.open .export-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.export-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 16px !important;
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: 14px !important;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+
+.export-menu-item:hover {
+    background: var(--ai-section-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+.export-menu-item svg {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   Page Toolbar Styles (Above Comic Page)
+   ======================================== */
+.page-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    width: 600px;
+    margin-bottom: 16px;
+    padding: 8px 0;
+}
+
+.toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px !important;
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    white-space: nowrap;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+    background: var(--ai-section-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: #007aff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+}
+
+.toolbar-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toolbar-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.toolbar-btn.loading svg {
+    animation: spin 0.8s linear infinite;
+}
+
+.toolbar-btn svg {
+    flex-shrink: 0;
+    color: currentColor;
+}
+
+/* ========================================
+   Generate All Button (Bottom Prompt Area)
+   ======================================== */
+.prompt-wrapper .generate-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px !important;
+    background: linear-gradient(135deg, #5856d6, #4745b8) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    white-space: nowrap;
+    margin: 4px;
+    box-shadow: 0 2px 8px rgba(88, 86, 214, 0.3);
+}
+
+.prompt-wrapper .generate-all-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4745b8, #3634a3) !important;
+    box-shadow: 0 4px 12px rgba(88, 86, 214, 0.4);
+    transform: scale(1.02);
+}
+
+.prompt-wrapper .generate-all-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.prompt-wrapper .generate-all-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.prompt-wrapper .generate-all-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.prompt-wrapper .generate-all-btn.loading svg {
+    animation: spin 0.8s linear infinite;
+}
+
+.prompt-wrapper .generate-all-btn svg {
+    flex-shrink: 0;
+}
+
 /* Loading Spinner */
 .spinner {
     display: inline-block;
@@ -845,6 +1128,7 @@ label {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }

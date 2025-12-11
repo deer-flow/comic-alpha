@@ -16,7 +16,7 @@ class ThemeManager {
     init() {
         // Apply saved theme
         this.applyTheme(this.currentTheme);
-        
+
         // Listen for system theme changes
         if (window.matchMedia) {
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
@@ -66,7 +66,7 @@ class ThemeManager {
      */
     applyTheme(theme) {
         const html = document.documentElement;
-        
+
         if (theme === 'dark') {
             html.setAttribute('data-theme', 'dark');
         } else {
@@ -95,10 +95,10 @@ class ThemeManager {
     toggleTheme() {
         const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         this.setTheme(newTheme);
-        
+
         // Dispatch custom event for other components
-        window.dispatchEvent(new CustomEvent('themeChanged', { 
-            detail: { theme: newTheme } 
+        window.dispatchEvent(new CustomEvent('themeChanged', {
+            detail: { theme: newTheme }
         }));
     }
 
@@ -111,26 +111,23 @@ class ThemeManager {
     }
 
     /**
-     * Update theme button icon
+     * Update theme button icon and text
      */
     updateThemeButton() {
         const themeBtn = document.getElementById('theme-btn');
         if (themeBtn) {
             const icon = themeBtn.querySelector('.theme-icon');
             if (icon) {
-                // Sun icon for light mode (showing current state)
-                // Moon icon for dark mode (showing current state)
+                // Sun icon for light mode, Moon icon for dark mode
                 icon.textContent = this.currentTheme === 'light' ? '☀️' : '🌙';
             }
-            
-            // Update title with i18n support
-            if (window.i18n) {
-                const titleKey = this.currentTheme === 'light' ? 'themeBtnLight' : 'themeBtnDark';
-                const title = window.i18n.t(titleKey);
-                themeBtn.setAttribute('title', title);
-            } else {
-                const title = this.currentTheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
-                themeBtn.setAttribute('title', title);
+
+            // Update text label with i18n support
+            const textSpan = themeBtn.querySelector('span[data-i18n]');
+            if (textSpan && window.i18n) {
+                const textKey = this.currentTheme === 'light' ? 'themeBtnLight' : 'themeBtnDark';
+                textSpan.textContent = window.i18n.t(textKey);
+                textSpan.setAttribute('data-i18n', textKey);
             }
         }
     }
@@ -142,9 +139,9 @@ const themeManager = new ThemeManager();
 // Export for use in other modules
 if (typeof window !== 'undefined') {
     window.themeManager = themeManager;
-    
+
     // Global function for button onclick
-    window.toggleTheme = function() {
+    window.toggleTheme = function () {
         themeManager.toggleTheme();
     };
 }

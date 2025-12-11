@@ -52,12 +52,8 @@ class UIController {
         this.errorMsg = document.getElementById('error-msg');
         this.pageIndicator = document.getElementById('page-indicator');
         this.pageNav = document.getElementById('page-nav');
-        this.actionButtons = document.getElementById('action-buttons');
-
-        // Hide download button initially
-        if (this.downloadBtn) {
-            this.downloadBtn.style.display = 'none';
-        }
+        this.pageToolbar = document.getElementById('page-toolbar');
+        this.generateCurrentBtn = document.getElementById('generate-current-btn');
     }
 
     /**
@@ -256,29 +252,18 @@ class UIController {
             // Update page manager
             this.pageManager.setPages(result.pages);
 
-            // Show action buttons container
-            if (this.actionButtons) {
-                this.actionButtons.style.display = 'flex';
+            // Show page toolbar above comic page
+            if (this.pageToolbar) {
+                this.pageToolbar.style.display = 'flex';
             }
 
-            // Show download button after generation
-            if (this.downloadBtn) {
-                this.downloadBtn.style.display = 'block';
-            }
-
-            // Show navigation if multiple pages
+            // Show navigation and generate all button if multiple pages
             if (result.page_count > 1) {
                 this.pageNav.style.display = 'flex';
-                this.generateAllBtn.style.display = 'block';
+                this.generateAllBtn.style.display = 'inline-flex';
             } else {
                 this.pageNav.style.display = 'none';
                 this.generateAllBtn.style.display = 'none';
-            }
-
-            // Show Xiaohongshu button
-            const xiaohongshuBtn = document.getElementById('xiaohongshu-btn');
-            if (xiaohongshuBtn) {
-                xiaohongshuBtn.style.display = 'block';
             }
 
             // Load first page
@@ -329,19 +314,12 @@ class UIController {
                 if (editHint) editHint.style.display = 'block';
                 if (previewContainer) previewContainer.classList.add('has-content');
 
-                // Show action buttons
-                if (this.actionButtons) this.actionButtons.style.display = 'flex';
-                if (this.downloadBtn) this.downloadBtn.style.display = 'block';
-
-                // Check if we need to show Xiaohongshu button (if we have pages)
-                if (this.pageManager.getPageCount() > 0) {
-                    const xiaohongshuBtn = document.getElementById('xiaohongshu-btn');
-                    if (xiaohongshuBtn) xiaohongshuBtn.style.display = 'block';
-                }
+                // Show page toolbar
+                if (this.pageToolbar) this.pageToolbar.style.display = 'flex';
 
                 // Check if we need to show Generate All button (if we have multiple pages)
                 if (this.pageManager.getPageCount() > 1) {
-                    if (this.generateAllBtn) this.generateAllBtn.style.display = 'block';
+                    if (this.generateAllBtn) this.generateAllBtn.style.display = 'inline-flex';
                 }
             } else {
                 throw new Error('Render failed');
@@ -1325,3 +1303,21 @@ function changeLanguage(lang) {
         comicLanguageSelect.value = lang;
     }
 }
+
+/**
+ * Toggle export dropdown menu
+ */
+function toggleExportMenu() {
+    const dropdown = document.getElementById('export-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('open');
+    }
+}
+
+// Close export menu when clicking outside
+document.addEventListener('click', function (event) {
+    const dropdown = document.getElementById('export-dropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('open');
+    }
+});
