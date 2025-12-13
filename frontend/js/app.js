@@ -363,8 +363,25 @@ class UIController {
         this.prevBtn.disabled = !this.pageManager.hasPrevPage();
         this.nextBtn.disabled = !this.pageManager.hasNextPage();
 
-        // Render
-        this.renderComic();
+        // Check if we have a generated image for this page
+        const pageIndex = this.pageManager.getCurrentPageIndex();
+        if (this.generatedPagesImages && this.generatedPagesImages[pageIndex]) {
+            // If we have an image, show it directly (no animation needed for navigation)
+            this.displayImageDirectly(this.generatedPagesImages[pageIndex].imageUrl);
+
+            // Also need to render the underlying comic structure for the renderer state
+            // but we hide it or valid rendering happens before we replace content?
+            // Actually, we should just let renderComic run to update state, then replace content?
+            // Or just skip renderComic if we show image?
+            // Better: update renderer state but overwrite DOM.
+            // But renderer.render overwrites DOM. 
+            // So: render first, then overwrite if image exists.
+            this.renderComic();
+            this.displayImageDirectly(this.generatedPagesImages[pageIndex].imageUrl);
+        } else {
+            // Render sketch
+            this.renderComic();
+        }
     }
 
     /**
@@ -662,10 +679,35 @@ class UIController {
 
         // 3. Swap content
         comicPage.innerHTML = '';
+
+        // Create container for image and button
+        const container = document.createElement('div');
+        container.className = 'generated-image-container';
+
+        // Create image
         const img = document.createElement('img');
         img.src = imageUrl;
         img.className = 'generated-comic-image';
-        comicPage.appendChild(img);
+
+        // Create download button
+        const downloadBtn = document.createElement('div');
+        downloadBtn.className = 'overlay-download-btn';
+        downloadBtn.title = window.i18n.t('btnDownloadImage');
+        downloadBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        downloadBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.downloadImageFromUrl(imageUrl);
+        };
+
+        container.appendChild(img);
+        container.appendChild(downloadBtn);
+        comicPage.appendChild(container);
 
         // Ensure scroll to top
         comicPage.scrollTop = 0;
@@ -677,6 +719,49 @@ class UIController {
         // 5. Cleanup classes after animation
         await this._delay(800);
         comicPage.classList.remove('flip-in');
+    }
+
+    /**
+     * Display generated image directly on canvas without animation (for navigation)
+     * @param {string} imageUrl - URL of the generated image
+     */
+    displayImageDirectly(imageUrl) {
+        const comicPage = document.getElementById('comic-page');
+        if (!comicPage) return;
+
+        comicPage.innerHTML = '';
+
+        // Create container for image and button
+        const container = document.createElement('div');
+        container.className = 'generated-image-container';
+
+        // Create image
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.className = 'generated-comic-image';
+
+        // Create download button
+        const downloadBtn = document.createElement('div');
+        downloadBtn.className = 'overlay-download-btn';
+        downloadBtn.title = window.i18n.t('btnDownloadImage');
+        downloadBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        downloadBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.downloadImageFromUrl(imageUrl);
+        };
+
+        container.appendChild(img);
+        container.appendChild(downloadBtn);
+        comicPage.appendChild(container);
+
+        // Ensure scroll to top
+        comicPage.scrollTop = 0;
     }
 
 
