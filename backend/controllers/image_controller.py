@@ -60,6 +60,51 @@ def generate_comic_image():
         return jsonify({"error": str(e)}), 500
 
 
+@image_bp.route('/api/generate-cover', methods=['POST'])
+def generate_comic_cover_endpoint():
+    """
+    Generate comic cover image endpoint
+    
+    Expected JSON body:
+    {
+        "comic_style": "doraemon",
+        "google_api_key": "your-google-api-key"
+    }
+    """
+    try:
+        data = request.get_json()
+        print(data)
+        
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
+        google_api_key = data.get('google_api_key')
+        if not google_api_key:
+            return jsonify({"error": "Google API key is required"}), 400
+        
+        comic_style = data.get('comic_style', 'doraemon')
+        reference_imgs = data.get('reference_imgs')
+        
+        # Generate cover using service
+        image_url, prompt = ImageService.generate_comic_cover(
+            comic_style=comic_style,
+            google_api_key=google_api_key,
+            reference_imgs=reference_imgs
+        )
+        
+        if not image_url:
+            return jsonify({"error": "Cover generation failed"}), 500
+        
+        return jsonify({
+            "success": True,
+            "image_url": image_url,
+            "prompt": prompt
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @image_bp.route('/api/proxy-image', methods=['GET'])
 def proxy_image():
     """

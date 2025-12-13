@@ -1084,7 +1084,8 @@ label {
    Unified style for Render Page & Generate All
    ======================================== */
 .prompt-wrapper .render-btn,
-.prompt-wrapper .generate-all-btn {
+.prompt-wrapper .generate-all-btn,
+.prompt-wrapper .generate-cover-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -1103,7 +1104,8 @@ label {
 }
 
 .prompt-wrapper .render-btn:hover:not(:disabled),
-.prompt-wrapper .generate-all-btn:hover:not(:disabled) {
+.prompt-wrapper .generate-all-btn:hover:not(:disabled),
+.prompt-wrapper .generate-cover-btn:hover:not(:disabled) {
     background: var(--ai-section-bg) !important;
     color: var(--text-primary) !important;
     border-color: #007aff !important;
@@ -1111,29 +1113,34 @@ label {
 }
 
 .prompt-wrapper .render-btn:active:not(:disabled),
-.prompt-wrapper .generate-all-btn:active:not(:disabled) {
+.prompt-wrapper .generate-all-btn:active:not(:disabled),
+.prompt-wrapper .generate-cover-btn:active:not(:disabled) {
     transform: scale(0.98);
 }
 
 .prompt-wrapper .render-btn:disabled,
-.prompt-wrapper .generate-all-btn:disabled {
+.prompt-wrapper .generate-all-btn:disabled,
+.prompt-wrapper .generate-cover-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
 .prompt-wrapper .render-btn.loading,
-.prompt-wrapper .generate-all-btn.loading {
+.prompt-wrapper .generate-all-btn.loading,
+.prompt-wrapper .generate-cover-btn.loading {
     pointer-events: none;
     opacity: 0.7;
 }
 
 .prompt-wrapper .render-btn.loading svg,
-.prompt-wrapper .generate-all-btn.loading svg {
+.prompt-wrapper .generate-all-btn.loading svg,
+.prompt-wrapper .generate-cover-btn.loading svg {
     animation: spin 0.8s linear infinite;
 }
 
 .prompt-wrapper .render-btn svg,
-.prompt-wrapper .generate-all-btn svg {
+.prompt-wrapper .generate-all-btn svg,
+.prompt-wrapper .generate-cover-btn svg {
     flex-shrink: 0;
     color: currentColor;
 }
@@ -1169,7 +1176,9 @@ button.loading {
 
 button.loading .spinner {
     display: inline-block;
-}/* Board Flip Animation */
+}
+
+/* Board Flip Animation */
 .flip-wrapper {
     perspective: 2000px;
     position: relative;
@@ -1213,7 +1222,9 @@ button.loading .spinner {
     display: block;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}/* Generated Image Container */
+}
+
+/* Generated Image Container */
 .generated-image-container {
     position: relative;
     width: 100%;
@@ -1259,4 +1270,62 @@ button.loading .spinner {
 
 .overlay-download-btn:active {
     transform: scale(0.95);
+}
+
+/* Prompt Buttons - Additional Actions */
+.render-btn,
+.generate-all-btn,
+.generate-cover-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: none;
+    color: white;
+    height: 36px;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+.render-btn {
+    background: linear-gradient(135deg, #ff9500, #ffba00);
+}
+
+.render-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+}
+
+.generate-all-btn {
+    background: linear-gradient(135deg, #34c759, #30b350);
+}
+
+.generate-all-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+}
+
+
+
+.render-btn svg,
+.generate-all-btn svg,
+.generate-cover-btn svg {
+    margin-top: 1px;
+}
+
+.render-btn:disabled,
+.generate-all-btn:disabled,
+.generate-cover-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: var(--disabled-bg);
+    color: var(--disabled-text);
+    box-shadow: none;
+    transform: none;
 }

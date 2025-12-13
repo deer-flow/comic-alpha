@@ -64,6 +64,43 @@ class ImageService:
         return image_url, prompt
     
     @staticmethod
+    def generate_comic_cover(
+        comic_style: str = 'doraemon',
+        google_api_key: str = None,
+        reference_imgs: List[Union[str, Dict]] = None
+    ) -> tuple[Optional[str], str]:
+        """
+        Generate comic cover image
+        
+        Args:
+            comic_style: Style of the comic
+            google_api_key: Google API key
+            reference_imgs: List of reference image URLs
+            
+        Returns:
+            Tuple of (image_url, prompt)
+        """
+        # Create cover prompt
+        prompt = ImageService._create_cover_prompt(comic_style)
+        
+        # Prepare reference images list (extract URLs from objects if needed)
+        processed_refs = []
+        if reference_imgs:
+            for img in reference_imgs:
+                if isinstance(img, dict) and 'imageUrl' in img:
+                    processed_refs.append(img['imageUrl'])
+                elif isinstance(img, str):
+                    processed_refs.append(img)
+
+        image_url = generate_social_media_image_core(
+            prompt=prompt,
+            reference_img=processed_refs,
+            google_api_key=google_api_key
+        )
+        
+        return image_url, prompt
+    
+    @staticmethod
     def proxy_image_download(image_url: str) -> tuple[bytes, str]:
         """
         Proxy image download to bypass CORS restrictions
@@ -128,4 +165,22 @@ class ImageService:
             panels="\n".join(panels)
         )
         print(final_prompt)
+        return final_prompt
+    
+    @staticmethod
+    def _create_cover_prompt(comic_style: str) -> str:
+        """Create prompt for comic cover"""
+        prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
+
+# Requirements:
+- The image must be a vertical comic book cover composition.
+- The art style must strictly follow {comic_style}.
+- Make it eye-catching and dramatic.
+- Include a main character or scene that represents the story.
+- High resolution, detailed, and professional quality.
+- No other text except the title.
+- Vibrant colors and "Cover Art" aesthetic.
+"""
+        final_prompt = prompt_template.format(comic_style=comic_style)
+        print(f"Cover Prompt: {final_prompt}")
         return final_prompt

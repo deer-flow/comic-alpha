@@ -168,6 +168,41 @@ class ComicAPI {
     static async generateXiaohongshuContent(apiKey, comicData, baseUrl, model) {
         return this.generateSocialMediaContent(apiKey, comicData, baseUrl, model, 'xiaohongshu');
     }
+
+    /**
+     * Generate comic cover
+     * @param {string} apiKey - API Key
+     * @param {string} comicStyle - Comic style
+     * @param {Array} referenceImages - List of reference images
+     * @returns {Promise<Object>} Generation result
+     */
+    static async generateCover(apiKey, comicStyle, referenceImages = null) {
+        try {
+            const config = ConfigManager.getCurrentConfig();
+
+            const response = await fetch(`${API_BASE_URL}/generate-cover`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    comic_style: comicStyle,
+                    google_api_key: apiKey, // Using Google API Key for image generation
+                    reference_imgs: referenceImages
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Cover generation failed');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+    }
 }
 
 // Export for use in other modules

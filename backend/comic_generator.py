@@ -58,6 +58,11 @@ def generate_social_media_image_core(
                     resp.raise_for_status()
                     img = Image.open(io.BytesIO(resp.content))
                     contents.append(img)
+                elif img_str.startswith("/backend/static/images/"):
+                    logger.info(f"Processing reference image: {img_str}")
+                    img_str = img_str.replace("/backend", "")
+                    img = Image.open(f"{os.getcwd()}/{img_str}")
+                    contents.append(img)
                 elif img_str.startswith('data:image'):
                     logger.info("Processing base64 reference image")
                     # Extract base64 data

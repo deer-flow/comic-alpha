@@ -66,6 +66,7 @@ const i18n = {
             generateAllBtn: '🎨 生成所有页漫画',
             generateAllText: '生成全部',
             renderThisPage: '渲染本页',
+            btnGenerateCover: '生成封面',
             xiaohongshuBtn: '📱 生成小红书内容',
 
             // Export dropdown
@@ -130,7 +131,11 @@ const i18n = {
             btnCopyAll: '📋 复制全部',
             btnCopied: '✓ 已复制',
             btnDownloadImage: '下载图片',
+            statusGeneratingCover: '封面生成中...',
+            modalCoverTitle: '漫画封面',
 
+
+            // Errors
             // Language switcher
             languageLabel: '语言 / Language',
         },
@@ -192,6 +197,7 @@ const i18n = {
             generateAllBtn: '🎨 Generate All Pages',
             generateAllText: 'Generate All',
             renderThisPage: 'Render Page',
+            btnGenerateCover: 'Generate Cover',
             xiaohongshuBtn: '📱 Generate Twitter Post',
 
             // Export dropdown
@@ -256,7 +262,11 @@ const i18n = {
             btnCopyAll: '📋 Copy All',
             btnCopied: '✓ Copied',
             btnDownloadImage: 'Download Image',
+            statusGeneratingCover: 'Generating Cover...',
+            modalCoverTitle: 'Comic Cover',
 
+
+            // Errors
             // Language switcher
             languageLabel: 'Language / 语言',
         }

@@ -248,6 +248,15 @@ class UIController {
                 language
             );
 
+            // Reset generated images when loading new JSON
+            this.generatedPagesImages = {};
+
+            // Hide cover generation button
+            const coverBtn = document.getElementById('generate-cover-btn');
+            if (coverBtn) {
+                coverBtn.style.display = 'none';
+            }
+
             // Update page manager
             this.pageManager.setPages(result.pages);
 
@@ -304,6 +313,15 @@ class UIController {
             this.errorMsg.style.display = 'none';
 
             if (this.renderer.render(data)) {
+                // Reset generated images for the new content
+                this.generatedPagesImages = {};
+
+                // Hide cover generation button
+                const coverBtn = document.getElementById('generate-cover-btn');
+                if (coverBtn) {
+                    coverBtn.style.display = 'none';
+                }
+
                 // Success - show comic page and hint
                 const comicPage = document.getElementById('comic-page');
                 const editHint = document.querySelector('.edit-hint');
@@ -508,6 +526,13 @@ class UIController {
                 await this.showGeneratedImageOnCanvas(result.image_url);
                 this.showStatus(window.i18n.t('statusImageSuccess'), 'success');
                 setTimeout(() => this.hideStatus(), 3000);
+
+                // Enable cover generation button if we have at least one image
+                const coverBtn = document.getElementById('generate-cover-btn');
+                if (coverBtn) {
+                    coverBtn.style.display = 'inline-flex';
+                    coverBtn.disabled = false;
+                }
             } else {
                 throw new Error('Image generation failed');
             }
@@ -628,6 +653,13 @@ class UIController {
             // No longer showing gallery popup as images are displayed on canvas
             // const allImages = Object.values(this.generatedPagesImages).sort((a, b) => a.pageIndex - b.pageIndex);
             // this.displayAllGeneratedImages(allImages);
+
+            // Enable cover generation button
+            const coverBtn = document.getElementById('generate-cover-btn');
+            if (coverBtn) {
+                coverBtn.style.display = 'inline-flex'; // Ensure it's visible
+                coverBtn.disabled = false;
+            }
 
         } catch (error) {
             console.error('Batch generation failed:', error);
@@ -1112,6 +1144,73 @@ class UIController {
         // Add to page
         document.body.appendChild(modal);
     }
+
+    /**
+     * Generate comic cover
+     */
+    async generateCover() {
+        const googleApiKey = this.googleApiKeyInput.value.trim();
+        if (!googleApiKey) {
+            alert(window.i18n.t('alertNoGoogleApiKey') || 'Please configure Google API Key in settings');
+            return;
+        }
+
+        const coverBtn = document.getElementById('generate-cover-btn');
+        const originalText = coverBtn.innerHTML;
+
+        try {
+            if (coverBtn) {
+                coverBtn.disabled = true;
+                coverBtn.classList.add('loading');
+            }
+
+            this.showStatus(window.i18n.t('statusGeneratingCover') || 'Generating cover...', 'info');
+
+            const comicStyle = this.comicStyleSelect.value;
+
+            // Collect all generated page images as references
+            const referenceImages = [];
+            if (this.generatedPagesImages) {
+                // Get all page objects and sort by index
+                const sortedPages = Object.values(this.generatedPagesImages)
+                    .sort((a, b) => a.pageIndex - b.pageIndex);
+
+                // Add full page objects to reference list
+                sortedPages.forEach(page => {
+                    if (page && page.imageUrl) {
+                        referenceImages.push(page);
+                    }
+                });
+            }
+
+            // Call API
+            const result = await ComicAPI.generateCover(
+                googleApiKey,
+                comicStyle,
+                referenceImages
+            );
+
+            if (result.success && result.image_url) {
+                this.showStatus(window.i18n.t('statusCoverSuccess') || 'Cover generated successfully!', 'success');
+                setTimeout(() => this.hideStatus(), 3000);
+
+                // Display result
+                this.displayGeneratedImage(result.image_url);
+            } else {
+                throw new Error(result.error || 'Generaton failed');
+            }
+
+        } catch (error) {
+            console.error('Cover generation failed:', error);
+            this.showStatus(window.i18n.t('statusError', { error: error.message }), 'error');
+            alert(window.i18n.t('errorCoverFailed') || `Cover generation failed: ${error.message}`);
+        } finally {
+            if (coverBtn) {
+                coverBtn.disabled = false;
+                coverBtn.classList.remove('loading');
+            }
+        }
+    }
 }
 
 // Initialize app when DOM is ready
@@ -1166,6 +1265,10 @@ function generateXiaohongshuContent() {
     if (app) app.generateXiaohongshuContent();
 }
 
+function generateCover() {
+    if (app) app.generateCover();
+}
+
 function changeLanguage(lang) {
     if (window.i18n) {
         window.i18n.setLanguage(lang);
@@ -1195,3 +1298,108 @@ document.addEventListener('click', function (event) {
         dropdown.classList.remove('open');
     }
 });
+// Helper for simple display (re-adding simplified version for cover)
+// Re-adding this method to UIController class as we removed it previously
+UIController.prototype.displayGeneratedImage = function (imageUrl) {
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+        `;
+
+    // Create image container
+    const imgContainer = document.createElement('div');
+    imgContainer.style.cssText = `
+            max-width: 90%;
+            max-height: 90%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+
+    // Title
+    const title = document.createElement('h3');
+    title.innerText = window.i18n.t('modalCoverTitle');
+    title.style.textAlign = 'center';
+    title.style.margin = '0 0 10px 0';
+
+    // Create image
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.style.cssText = `
+            max-width: 100%;
+            max-height: 70vh;
+            display: block;
+            border-radius: 4px;
+        `;
+
+    // Create download button
+    const downloadBtn = document.createElement('button');
+    downloadBtn.innerText = window.i18n.t('btnDownloadImage');
+    downloadBtn.style.cssText = `
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        `;
+    downloadBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.downloadImageFromUrl(imageUrl);
+    };
+
+    // Create close button
+    const closeBtn = document.createElement('button');
+    closeBtn.innerText = window.i18n.t('btnClose');
+    closeBtn.style.cssText = `
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        `;
+    closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        document.body.removeChild(modal);
+    };
+
+    // Assemble modal
+    imgContainer.appendChild(title);
+    imgContainer.appendChild(img);
+    imgContainer.appendChild(downloadBtn);
+    imgContainer.appendChild(closeBtn);
+    modal.appendChild(imgContainer);
+
+    // Close on background click
+    modal.onclick = () => {
+        document.body.removeChild(modal);
+    };
+
+    // Prevent closing when clicking on image container
+    imgContainer.onclick = (e) => {
+        e.stopPropagation();
+    };
+
+    // Add to page
+    document.body.appendChild(modal);
+};
