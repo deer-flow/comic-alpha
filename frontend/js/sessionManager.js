@@ -14,7 +14,7 @@ class SessionManager {
 
         // If no sessions exist, create a default one
         if (Object.keys(this.sessions).length === 0) {
-            this.createSession(window.i18n ? window.i18n.t('defaultSessionName') : 'Session 1');
+            this.createSession('session 1');
         }
 
         // If no current session is set, use the first one
@@ -44,10 +44,14 @@ class SessionManager {
 
         const session = {
             id: sessionId,
-            name: name || (window.i18n ? window.i18n.t('defaultSessionName') : 'Session') + ' ' + (Object.keys(this.sessions).length + 1),
+            name: name || 'session ' + (Object.keys(this.sessions).length + 1),
             comicData: null,
             generatedImages: {},
             currentPageIndex: 0,
+            style: 'doraemon', // Default style
+            language: (window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en',
+            pageCount: 3,
+            prompt: '',
             createdAt: now,
             updatedAt: now
         };
@@ -121,6 +125,10 @@ class SessionManager {
         if (data.comicData !== undefined) session.comicData = data.comicData;
         if (data.generatedImages !== undefined) session.generatedImages = data.generatedImages;
         if (data.currentPageIndex !== undefined) session.currentPageIndex = data.currentPageIndex;
+        if (data.style !== undefined) session.style = data.style;
+        if (data.language !== undefined) session.language = data.language;
+        if (data.pageCount !== undefined) session.pageCount = data.pageCount;
+        if (data.prompt !== undefined) session.prompt = data.prompt;
 
         session.updatedAt = new Date().toISOString();
 
@@ -238,7 +246,7 @@ class SessionManager {
             localStorage.removeItem(this.currentSessionKey);
 
             // Create a new default session
-            this.createSession(window.i18n ? window.i18n.t('defaultSessionName') : 'Session 1');
+            this.createSession('session 1');
             this.currentSessionId = Object.keys(this.sessions)[0];
             this.saveCurrentSessionId();
 

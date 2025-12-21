@@ -108,6 +108,32 @@ class UIController {
         this.promptInput.addEventListener('input', () => {
             this.updateGenerateButtonState();
         });
+
+        // Save session state when style or language changes
+        if (this.comicStyleSelect) {
+            this.comicStyleSelect.addEventListener('change', () => {
+                this.saveCurrentSessionState();
+            });
+        }
+
+        if (this.comicLanguageSelect) {
+            this.comicLanguageSelect.addEventListener('change', () => {
+                this.saveCurrentSessionState();
+            });
+        }
+
+        // Save session state for prompt and page count
+        if (this.promptInput) {
+            this.promptInput.addEventListener('blur', () => {
+                this.saveCurrentSessionState();
+            });
+        }
+
+        if (this.pageCountInput) {
+            this.pageCountInput.addEventListener('change', () => {
+                this.saveCurrentSessionState();
+            });
+        }
     }
 
     /**
@@ -1269,7 +1295,11 @@ class UIController {
         this.sessionManager.updateCurrentSession({
             comicData: comicData,
             generatedImages: this.generatedPagesImages,
-            currentPageIndex: this.pageManager.getCurrentPageIndex()
+            currentPageIndex: this.pageManager.getCurrentPageIndex(),
+            style: this.comicStyleSelect ? this.comicStyleSelect.value : 'doraemon',
+            language: this.comicLanguageSelect ? this.comicLanguageSelect.value : 'en',
+            pageCount: this.pageCountInput ? parseInt(this.pageCountInput.value) : 3,
+            prompt: this.promptInput ? this.promptInput.value : ''
         });
     }
 
@@ -1281,6 +1311,25 @@ class UIController {
 
         const session = this.sessionManager.getCurrentSession();
         if (!session) return;
+
+        // Restore style and language
+        if (this.comicStyleSelect) {
+            this.comicStyleSelect.value = session.style || 'doraemon';
+        }
+
+        if (this.comicLanguageSelect) {
+            this.comicLanguageSelect.value = session.language || 'en';
+        }
+
+        // Restore prompt and page count
+        if (this.promptInput) {
+            this.promptInput.value = session.prompt || '';
+            this.updateGenerateButtonState(); // Update button state based on new prompt
+        }
+
+        if (this.pageCountInput) {
+            this.pageCountInput.value = session.pageCount || 3;
+        }
 
         // Restore comic data
         if (session.comicData && session.comicData.pages) {
@@ -1381,7 +1430,7 @@ class UIController {
 
         // Create new session
         const sessionCount = this.sessionManager.getAllSessions().length + 1;
-        const defaultName = (window.i18n ? window.i18n.t('defaultSessionName') : 'Session') + ' ' + sessionCount;
+        const defaultName = 'session ' + sessionCount;
         const session = this.sessionManager.createSession(defaultName);
 
         // Switch to new session
@@ -1408,6 +1457,9 @@ class UIController {
 
         // Update UI
         this.updateSessionSelector();
+
+        // Load default state for new session (language, style)
+        this.loadSessionState();
     }
 
     /**
