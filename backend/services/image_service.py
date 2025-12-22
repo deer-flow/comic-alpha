@@ -35,13 +35,6 @@ class ImageService:
         # Prepare reference images (can be single image or array)
         reference_images = []
         
-        # Add current page sketch as first reference
-        if reference_img:
-            if isinstance(reference_img, str):
-                reference_images.append(reference_img)
-            elif isinstance(reference_img, list):
-                reference_images.extend(reference_img)
-        
         # Add previous generated pages as additional references
         if extra_body and isinstance(extra_body, list):
             # extra_body contains previous page URLs
@@ -50,6 +43,13 @@ class ImageService:
                     reference_images.append(prev_page['imageUrl'])
                 elif isinstance(prev_page, str):
                     reference_images.append(prev_page)
+        
+        # Add current page sketch as last reference
+        if reference_img:
+            if isinstance(reference_img, str):
+                reference_images.append(reference_img)
+            elif isinstance(reference_img, list):
+                reference_images.extend(reference_img)
         
         # Use reference_images if we have any, otherwise None
         final_reference = reference_images if reference_images else None

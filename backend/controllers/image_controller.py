@@ -37,6 +37,8 @@ def generate_comic_image():
         comic_style = data.get('comic_style', 'doraemon')
         reference_img = data.get('reference_img')
         extra_body = data.get('extra_body')
+
+        print(f"extra_body: {extra_body}")
         
         # Generate image using service
         image_url, prompt = ImageService.generate_comic_image(

@@ -551,9 +551,9 @@ class UIController {
             const currentPageIndex = this.pageManager.getCurrentPageIndex();
             let previousPages = null;
             if (currentPageIndex > 0 && Object.keys(this.generatedPagesImages).length > 0) {
-                // Get generated images from previous pages (up to 2)
+                // Get generated images from previous pages (up to 6)
                 const prevImages = [];
-                for (let i = currentPageIndex - 1; i >= 0 && prevImages.length < 2; i--) {
+                for (let i = currentPageIndex - 1; i >= 0 && prevImages.length < 6; i--) {
                     if (this.generatedPagesImages[i]) {
                         prevImages.unshift(this.generatedPagesImages[i]);
                     }
@@ -659,12 +659,12 @@ class UIController {
                 const element = this.renderer.getContainer();
                 const sketchBase64 = await ComicExporter.getBase64WithoutText(element);
 
-                // Prepare reference images (use previous 2 generated pages from member variable)
+                // Prepare reference images (use previous 6 generated pages from member variable)
                 let previousPages = null;
                 const prevImages = Object.values(this.generatedPagesImages)
                     .filter(img => img.pageIndex < i)
                     .sort((a, b) => b.pageIndex - a.pageIndex)
-                    .slice(0, 2)
+                    .slice(0, 6)
                     .reverse();
                 if (prevImages.length > 0) {
                     previousPages = prevImages;
