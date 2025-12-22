@@ -2,8 +2,19 @@
 Comic Generator Flask Application
 Main entry point - registers all Blueprints
 """
+import logging
 from flask import Flask
 from flask_cors import CORS
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # Output to console
+    ]
+)
+
 
 # Configure Flask with explicit static folder
 app = Flask(__name__, static_folder='static', static_url_path='/static')
