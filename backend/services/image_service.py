@@ -67,21 +67,23 @@ class ImageService:
     def generate_comic_cover(
         comic_style: str = 'doraemon',
         google_api_key: str = None,
-        reference_imgs: List[Union[str, Dict]] = None
+        reference_imgs: List[Union[str, Dict]] = None,
+        language: str = 'en'
     ) -> tuple[Optional[str], str]:
         """
         Generate comic cover image
-        
+
         Args:
             comic_style: Style of the comic
             google_api_key: Google API key
             reference_imgs: List of reference image URLs
-            
+            language: Language for cover generation (en, zh, ja)
+
         Returns:
             Tuple of (image_url, prompt)
         """
         # Create cover prompt
-        prompt = ImageService._create_cover_prompt(comic_style)
+        prompt = ImageService._create_cover_prompt(comic_style, language)
         
         # Prepare reference images list (extract URLs from objects if needed)
         processed_refs = []
@@ -168,8 +170,16 @@ class ImageService:
         return final_prompt
     
     @staticmethod
-    def _create_cover_prompt(comic_style: str) -> str:
+    def _create_cover_prompt(comic_style: str, language: str = 'en') -> str:
         """Create prompt for comic cover"""
+        # Language-specific text requirement
+        language_requirements = {
+            'zh': '生成的图片务必使用中文',
+            'en': 'Generated images must use English',
+            'ja': '生成された画像は必ず日本語を使用してください'
+        }
+        language_requirement = language_requirements.get(language, language_requirements['en'])
+
         prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
 
 # Requirements:
@@ -181,7 +191,11 @@ class ImageService:
 - Clear and sharp text for the title, do not repeat all the titles in reference images.
 - Vibrant colors and "Cover Art" aesthetic.
 - Only present one row one panel in the cover.
+- {language_requirement}
 """
-        final_prompt = prompt_template.format(comic_style=comic_style)
+        final_prompt = prompt_template.format(
+            comic_style=comic_style,
+            language_requirement=language_requirement
+        )
         print(f"Cover Prompt: {final_prompt}")
         return final_prompt

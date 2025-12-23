@@ -38,7 +38,7 @@ class SessionManager {
      * @param {string} name - Session name
      * @returns {Object} Created session
      */
-    createSession(name) {
+    createSession(name, options = {}) {
         const sessionId = this.generateSessionId();
         const now = new Date().toISOString();
 
@@ -48,10 +48,10 @@ class SessionManager {
             comicData: null,
             generatedImages: {},
             currentPageIndex: 0,
-            style: 'doraemon', // Default style
-            language: (window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en',
-            pageCount: 3,
-            prompt: '',
+            style: options.style || 'doraemon', // Use provided style or default
+            language: options.language || ((window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en'),
+            pageCount: options.pageCount || 3,
+            prompt: options.prompt || '',
             createdAt: now,
             updatedAt: now
         };
