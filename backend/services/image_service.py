@@ -168,7 +168,8 @@ class ImageService:
         )
         print(final_prompt)
         return final_prompt
-    
+
+
     @staticmethod
     def _create_cover_prompt(comic_style: str, language: str = 'en') -> str:
         """Create prompt for comic cover"""
