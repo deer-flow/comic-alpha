@@ -176,7 +176,7 @@ class ComicAPI {
      * @param {Array} referenceImages - List of reference images
      * @returns {Promise<Object>} Generation result
      */
-    static async generateCover(apiKey, comicStyle, referenceImages = null) {
+    static async generateCover(apiKey, comicStyle, referenceImages = null, language = 'en') {
         try {
             const config = ConfigManager.getCurrentConfig();
 
@@ -188,7 +188,8 @@ class ComicAPI {
                 body: JSON.stringify({
                     comic_style: comicStyle,
                     google_api_key: apiKey, // Using Google API Key for image generation
-                    reference_imgs: referenceImages
+                    reference_imgs: referenceImages,
+                    language: language
                 })
             });
 
