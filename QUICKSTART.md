@@ -2,14 +2,27 @@
 
 ## 5分钟快速体验
 
-### 第一步：启动后端服务
+### 第一步：启动服务
+
+建议使用一键启动脚本：
+
+```bash
+# 对于 macOS/Linux
+chmod +x start.sh
+./start.sh
+
+# 对于 Windows
+start.bat
+```
+
+或者手动启动后端：
 
 ```bash
 # 进入项目目录
-cd comic_alpha
+cd comic_alpha/backend
 
-# 启动后端（如果还没启动）
-python backend/app.py
+# 使用 uv 启动后端
+uv run app.py
 ```
 
 你应该看到：

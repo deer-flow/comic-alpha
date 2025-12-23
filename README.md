@@ -74,8 +74,12 @@ comic_alpha/
 │   ├── demos/                 # UI screenshots and demos
 │   └── examples/              # Generated comic examples
 ├── backend/                    # Backend service
-│   ├── app.py                 # Flask application main file
-│   └── requirements.txt       # Python dependencies
+│   ├── app.py                 # Flask application entry point
+│   ├── controllers/           # API controllers
+│   ├── services/              # Business logic services
+│   ├── static/                # Static assets (including generated images)
+│   ├── pyproject.toml         # Python project configuration
+│   └── uv.lock                # Python lock file
 ├── frontend/                   # Frontend resources
 │   ├── css/
 │   │   └── style.css         # Style file
@@ -86,10 +90,12 @@ comic_alpha/
 │       ├── config.js         # Configuration management module
 │       ├── renderer.js       # Rendering module
 │       ├── pageManager.js    # Page management module
+│       ├── sessionManager.js # Session management module
 │       ├── exporter.js       # Image export module
 │       └── app.js            # Main controller
 ├── index.html                 # Main page
-└── comic.html                 # Legacy version (preserved)
+├── start.sh                   # Startup script for Linux/macOS
+└── start.bat                  # Startup script for Windows
 ```
 
 ## Tech Stack
@@ -107,7 +113,22 @@ comic_alpha/
 
 ## Quick Start
 
-### 1. Install Backend Dependencies
+### Method 1: Using Startup Script (Recommended)
+
+Run the one-click startup script:
+
+```bash
+# For macOS/Linux
+chmod +x start.sh
+./start.sh
+
+# For Windows
+start.bat
+```
+
+### Method 2: Manual Start
+
+#### 1. Install Backend Dependencies
 
 This project uses [uv](https://github.com/astral-sh/uv) for fast dependency management.
 
@@ -117,7 +138,7 @@ cd backend
 uv sync
 ```
 
-### 2. Start Backend Service
+#### 2. Start Backend Service
 
 ```bash
 # Run the application using uv
@@ -126,9 +147,9 @@ uv run app.py
 
 The backend service will start at `http://localhost:5003`.
 
-### 3. Open Frontend Page
+#### 3. Open Frontend Page
 
-Open the `index.html` file in your browser, or use a local server:
+Use a local server:
 
 ```bash
 # Start a simple HTTP server using Python
@@ -346,6 +367,11 @@ Response:
 ### pageManager.js - Page Management
 - Manages multi-page comic state
 - Provides page navigation functionality
+
+### sessionManager.js - Session Management
+- Manages multiple generation sessions
+- Persists session data (script, images, settings) to localStorage
+- Supports session creation, selection, and deletion
 
 ### exporter.js - Image Export
 - Single page export

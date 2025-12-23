@@ -74,8 +74,12 @@ comic_alpha/
 │   ├── demos/                 # UI 截图和演示
 │   └── examples/              # 生成的漫画示例
 ├── backend/                    # 后端服务
-│   ├── app.py                 # Flask 应用主文件
-│   └── requirements.txt       # Python 依赖
+│   ├── app.py                 # Flask 应用入口文件
+│   ├── controllers/           # API 控制器
+│   ├── services/              # 业务逻辑服务
+│   ├── static/                # 静态资源（包含生成的图片）
+│   ├── pyproject.toml         # Python 项目配置
+│   └── uv.lock                # Python 依赖锁定文件
 ├── frontend/                   # 前端资源
 │   ├── css/
 │   │   └── style.css         # 样式文件
@@ -86,10 +90,12 @@ comic_alpha/
 │       ├── config.js         # 配置管理模块
 │       ├── renderer.js       # 渲染模块
 │       ├── pageManager.js    # 页面管理模块
+│       ├── sessionManager.js # 会话管理模块
 │       ├── exporter.js       # 图片导出模块
 │       └── app.js            # 主控制器
 ├── index.html                 # 主页面
-└── comic.html                 # 旧版本（保留）
+├── start.sh                   # Linux/macOS 启动脚本
+└── start.bat                  # Windows 启动脚本
 ```
 
 ## 技术栈
@@ -107,7 +113,22 @@ comic_alpha/
 
 ## 快速开始
 
-### 1. 安装后端依赖
+### 方式一：使用启动脚本（推荐）
+
+运行一键启动脚本：
+
+```bash
+# 对于 macOS/Linux
+chmod +x start.sh
+./start.sh
+
+# 对于 Windows
+start.bat
+```
+
+### 方式二：手动启动
+
+#### 1. 安装后端依赖
 
 本项目使用 [uv](https://github.com/astral-sh/uv) 进行极速依赖管理。
 
@@ -117,7 +138,7 @@ cd backend
 uv sync
 ```
 
-### 2. 启动后端服务
+#### 2. 启动后端服务
 
 ```bash
 # 使用 uv 运行应用
@@ -126,9 +147,9 @@ uv run app.py
 
 后端服务将在 `http://localhost:5003` 启动。
 
-### 3. 打开前端页面
+#### 3. 打开前端页面
 
-在浏览器中打开 `index.html` 文件，或使用本地服务器：
+使用本地服务器：
 
 ```bash
 # 使用 Python 启动简单的 HTTP 服务器
@@ -346,6 +367,11 @@ POST /api/generate-xiaohongshu
 ### pageManager.js - 页面管理
 - 管理多页漫画状态
 - 提供页面导航功能
+
+### sessionManager.js - 会话管理
+- 管理多个生成会话
+- 将会话数据（脚本、图片、设置）持久化到 localStorage
+- 支持会话创建、切换和删除
 
 ### exporter.js - 图片导出
 - 单页导出
