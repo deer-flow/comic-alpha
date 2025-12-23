@@ -857,6 +857,15 @@ class UIController {
         const img = document.createElement('img');
         img.src = imageUrl;
         img.className = 'generated-comic-image';
+        img.title = window.i18n ? window.i18n.t('doubleClickToEdit') || 'Double-click to edit script' : 'Double-click to edit script';
+        img.style.cursor = 'pointer';
+
+        // Add double-click handler to switch back to script view
+        img.addEventListener('dblclick', () => {
+            if (this.isViewingImage && !this.isGenerating) {
+                this.toggleView();
+            }
+        });
 
         // Create download button
         const downloadBtn = document.createElement('div');
@@ -908,6 +917,15 @@ class UIController {
         const img = document.createElement('img');
         img.src = imageUrl;
         img.className = 'generated-comic-image';
+        img.title = window.i18n ? window.i18n.t('doubleClickToEdit') || 'Double-click to edit script' : 'Double-click to edit script';
+        img.style.cursor = 'pointer';
+
+        // Add double-click handler to switch back to script view
+        img.addEventListener('dblclick', () => {
+            if (this.isViewingImage && !this.isGenerating) {
+                this.toggleView();
+            }
+        });
 
         // Create download button
         const downloadBtn = document.createElement('div');
@@ -1513,10 +1531,18 @@ class UIController {
         // Save current session state
         this.saveCurrentSessionState();
 
-        // Create new session
+        // Get current session's configuration to carry over
+        const currentSession = this.sessionManager.getCurrentSession();
+        const config = currentSession ? {
+            style: currentSession.style,
+            language: currentSession.language,
+            pageCount: currentSession.pageCount
+        } : {};
+
+        // Create new session with current configuration
         const sessionCount = this.sessionManager.getAllSessions().length + 1;
         const defaultName = 'session ' + sessionCount;
-        const session = this.sessionManager.createSession(defaultName);
+        const session = this.sessionManager.createSession(defaultName, config);
 
         // Switch to new session
         this.sessionManager.switchSession(session.id);

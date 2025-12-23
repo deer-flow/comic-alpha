@@ -78,6 +78,7 @@ const i18n = {
 
             // Edit hint
             editHint: '💡 点击任意面板可直接编辑内容',
+            doubleClickToEdit: '双击编辑脚本',
 
             // Status messages
             statusGenerating: '正在调用 {model}...',
@@ -225,6 +226,7 @@ const i18n = {
 
             // Edit hint
             editHint: '💡 Click any panel to edit content directly',
+            doubleClickToEdit: 'Double-click to edit script',
 
             // Status messages
             statusGenerating: 'Calling {model}...',

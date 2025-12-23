@@ -36,9 +36,10 @@ class SessionManager {
     /**
      * Create a new session
      * @param {string} name - Session name
+     * @param {Object} config - Optional configuration (style, language, pageCount)
      * @returns {Object} Created session
      */
-    createSession(name) {
+    createSession(name, config = {}) {
         const sessionId = this.generateSessionId();
         const now = new Date().toISOString();
 
@@ -48,9 +49,9 @@ class SessionManager {
             comicData: null,
             generatedImages: {},
             currentPageIndex: 0,
-            style: 'doraemon', // Default style
-            language: (window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en',
-            pageCount: 3,
+            style: config.style || 'doraemon', // Use provided style or default
+            language: config.language || ((window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en'),
+            pageCount: config.pageCount || 3,
             prompt: '',
             createdAt: now,
             updatedAt: now
@@ -188,11 +189,53 @@ class SessionManager {
     }
 
     /**
+     * Check if a session is empty (no user activity)
+     * @param {Object} session - Session object to check
+     * @returns {boolean} True if session is empty
+     */
+    isSessionEmpty(session) {
+        if (!session) return true;
+
+        // Session is considered empty if:
+        // 1. No prompt entered
+        // 2. No comic data generated
+        // 3. No images generated
+        const hasPrompt = session.prompt && session.prompt.trim().length > 0;
+        const hasComicData = session.comicData !== null && session.comicData !== undefined;
+        const hasGeneratedImages = session.generatedImages && Object.keys(session.generatedImages).length > 0;
+
+        return !hasPrompt && !hasComicData && !hasGeneratedImages;
+    }
+
+    /**
      * Save sessions to localStorage
+     * Filters out empty sessions before saving
      */
     saveToStorage() {
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.sessions));
+            // Filter out empty sessions, but keep current session and at least one session
+            const sessionsToSave = {};
+            let hasNonEmpty = false;
+
+            for (const [id, session] of Object.entries(this.sessions)) {
+                // Keep session if it's not empty OR if it's the current session
+                if (!this.isSessionEmpty(session) || id === this.currentSessionId) {
+                    sessionsToSave[id] = session;
+                    if (!this.isSessionEmpty(session)) {
+                        hasNonEmpty = true;
+                    }
+                }
+            }
+
+            // If all sessions are empty, keep the current session
+            // to ensure we always have at least one session
+            if (!hasNonEmpty && this.currentSessionId && this.sessions[this.currentSessionId]) {
+                sessionsToSave[this.currentSessionId] = this.sessions[this.currentSessionId];
+            }
+
+            // Save filtered sessions to localStorage
+            // Do NOT modify this.sessions in memory, only save to storage
+            localStorage.setItem(this.storageKey, JSON.stringify(sessionsToSave));
         } catch (error) {
             console.error('Failed to save sessions to storage:', error);
             // Handle quota exceeded error
@@ -215,6 +258,7 @@ class SessionManager {
 
     /**
      * Load sessions from localStorage
+     * Filters out empty sessions except the current one
      */
     loadFromStorage() {
         try {
@@ -222,7 +266,28 @@ class SessionManager {
             const savedCurrentId = localStorage.getItem(this.currentSessionKey);
 
             if (savedSessions) {
-                this.sessions = JSON.parse(savedSessions);
+                const allSessions = JSON.parse(savedSessions);
+
+                // Filter out empty sessions, but keep the current session
+                const filteredSessions = {};
+                let hasNonEmpty = false;
+
+                for (const [id, session] of Object.entries(allSessions)) {
+                    // Keep session if it's not empty OR if it's the current session
+                    if (!this.isSessionEmpty(session) || id === savedCurrentId) {
+                        filteredSessions[id] = session;
+                        if (!this.isSessionEmpty(session)) {
+                            hasNonEmpty = true;
+                        }
+                    }
+                }
+
+                // Ensure we have at least one session
+                if (Object.keys(filteredSessions).length === 0 && savedCurrentId && allSessions[savedCurrentId]) {
+                    filteredSessions[savedCurrentId] = allSessions[savedCurrentId];
+                }
+
+                this.sessions = filteredSessions;
             }
 
             if (savedCurrentId && this.sessions[savedCurrentId]) {
