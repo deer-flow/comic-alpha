@@ -759,6 +759,8 @@ label {
     margin: 0 auto;
     display: flex;
     align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 24px;
@@ -1116,16 +1118,17 @@ label {
    ======================================== */
 .prompt-wrapper .render-btn,
 .prompt-wrapper .generate-all-btn,
-.prompt-wrapper .generate-cover-btn {
+.prompt-wrapper .generate-cover-btn,
+.prompt-wrapper .toggle-view-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px !important;
-    background: transparent !important;
-    color: var(--text-secondary) !important;
-    border: 1px solid var(--border-color) !important;
+    padding: 8px 14px;
+    background: var(--ai-section-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 20px !important;
-    font-size: 13px !important;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1136,7 +1139,8 @@ label {
 
 .prompt-wrapper .render-btn:hover:not(:disabled),
 .prompt-wrapper .generate-all-btn:hover:not(:disabled),
-.prompt-wrapper .generate-cover-btn:hover:not(:disabled) {
+.prompt-wrapper .generate-cover-btn:hover:not(:disabled),
+.prompt-wrapper .toggle-view-btn:hover:not(:disabled) {
     background: var(--ai-section-bg) !important;
     color: var(--text-primary) !important;
     border-color: #007aff !important;
@@ -1145,33 +1149,38 @@ label {
 
 .prompt-wrapper .render-btn:active:not(:disabled),
 .prompt-wrapper .generate-all-btn:active:not(:disabled),
-.prompt-wrapper .generate-cover-btn:active:not(:disabled) {
+.prompt-wrapper .generate-cover-btn:active:not(:disabled),
+.prompt-wrapper .toggle-view-btn:active:not(:disabled) {
     transform: scale(0.98);
 }
 
 .prompt-wrapper .render-btn:disabled,
 .prompt-wrapper .generate-all-btn:disabled,
-.prompt-wrapper .generate-cover-btn:disabled {
+.prompt-wrapper .generate-cover-btn:disabled,
+.prompt-wrapper .toggle-view-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
 .prompt-wrapper .render-btn.loading,
 .prompt-wrapper .generate-all-btn.loading,
-.prompt-wrapper .generate-cover-btn.loading {
+.prompt-wrapper .generate-cover-btn.loading,
+.prompt-wrapper .toggle-view-btn.loading {
     pointer-events: none;
     opacity: 0.7;
 }
 
 .prompt-wrapper .render-btn.loading svg,
 .prompt-wrapper .generate-all-btn.loading svg,
-.prompt-wrapper .generate-cover-btn.loading svg {
+.prompt-wrapper .generate-cover-btn.loading svg,
+.prompt-wrapper .toggle-view-btn.loading svg {
     animation: spin 0.8s linear infinite;
 }
 
 .prompt-wrapper .render-btn svg,
 .prompt-wrapper .generate-all-btn svg,
-.prompt-wrapper .generate-cover-btn svg {
+.prompt-wrapper .generate-cover-btn svg,
+.prompt-wrapper .toggle-view-btn svg {
     flex-shrink: 0;
     color: currentColor;
 }
@@ -1340,6 +1349,17 @@ button.loading .spinner {
 .generate-all-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+}
+
+.toggle-view-btn {
+    background: linear-gradient(135deg, #007aff, #0051d5) !important;
+    color: white !important;
+}
+
+.toggle-view-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0051d5, #003ea0) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
 }
 
 

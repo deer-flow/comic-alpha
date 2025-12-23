@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>comic-perfect</title>
     <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
-    <link rel="stylesheet" href="frontend/css/style.css?v=2">
+    <link rel="stylesheet" href="frontend/css/style.css?v=4">
 </head>
 
 <body>
@@ -230,6 +230,20 @@
                 </svg>
                 <span data-i18n="renderThisPage">渲染本页</span>
             </button>
+            <!-- Toggle View Button -->
+            <button onclick="toggleView()" class="toggle-view-btn" id="toggle-view-btn" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 2L12 5L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M9 22L12 19L9 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M12 5C7.03 5 3 9.03 3 14C3 15.58 3.41 17.06 4.12 18.34" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 19C16.97 19 21 14.97 21 10C21 8.42 20.59 6.94 19.88 5.66" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span data-i18n="toggleView">翻转预览</span>
+            </button>
             <!-- Generate All Pages Button -->
             <button onclick="generateAllPagesImages()" class="generate-all-btn" id="generate-all-btn"
                 style="display: none;">
@@ -257,7 +271,7 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Application Modules -->
-    <script src="frontend/js/i18n.js?v=5"></script>
+    <script src="frontend/js/i18n.js?v=6"></script>
     <script src="frontend/js/theme.js?v=4"></script>
     <script src="frontend/js/config.js?v=4"></script>
     <script src="frontend/js/api.js?v=4"></script>
@@ -265,7 +279,7 @@
     <script src="frontend/js/pageManager.js?v=4"></script>
     <script src="frontend/js/exporter.js?v=4"></script>
     <script src="frontend/js/sessionManager.js?v=1"></script>
-    <script src="frontend/js/app.js?v=5"></script>
+    <script src="frontend/js/app.js?v=9"></script>
 </body>
 
 </html>
