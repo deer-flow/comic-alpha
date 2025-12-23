@@ -68,6 +68,7 @@ const i18n = {
             renderThisPage: '渲染本页',
             btnGenerateCover: '生成封面',
             xiaohongshuBtn: '📱 生成小红书内容',
+            toggleView: '翻转预览',
 
             // Export dropdown
             exportBtn: '导出',
@@ -214,6 +215,7 @@ const i18n = {
             renderThisPage: 'Render Page',
             btnGenerateCover: 'Generate Cover',
             xiaohongshuBtn: '📱 Generate Twitter Post',
+            toggleView: 'Flip View',
 
             // Export dropdown
             exportBtn: 'Export',

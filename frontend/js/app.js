@@ -7,6 +7,7 @@ class UIController {
         this.pageManager = new PageManager();
         this.renderer = new ComicRenderer('comic-page');
         this.isGenerating = false;
+        this.isViewingImage = false;
         this.generatedPagesImages = {}; // Store generated images by page index for reference
 
         // Initialize session manager
@@ -65,6 +66,12 @@ class UIController {
         this.pageIndicator = document.getElementById('page-indicator');
         this.pageNav = document.getElementById('page-nav');
         this.renderCurrentBtn = document.getElementById('render-current-btn');
+        this.toggleViewBtn = document.getElementById('toggle-view-btn');
+
+        console.log('UIController elements initialized:', {
+            renderCurrentBtn: !!this.renderCurrentBtn,
+            toggleViewBtn: !!this.toggleViewBtn
+        });
     }
 
     /**
@@ -443,10 +450,28 @@ class UIController {
 
         // Check if we have a generated image for this page
         const pageIndex = this.pageManager.getCurrentPageIndex();
-        if (this.generatedPagesImages && this.generatedPagesImages[pageIndex]) {
-            // If we have an image, show it directly (no animation needed for navigation)
-            this.displayImageDirectly(this.generatedPagesImages[pageIndex].imageUrl);
+        // Convert to string to match JSON keys from storage
+        const hasImage = this.generatedPagesImages && (this.generatedPagesImages[pageIndex] || this.generatedPagesImages[String(pageIndex)]);
+
+        console.log('loadCurrentPage check:', {
+            pageIndex: pageIndex,
+            hasImage: !!hasImage,
+            keys: this.generatedPagesImages ? Object.keys(this.generatedPagesImages) : []
+        });
+
+        if (hasImage) {
+            const imageData = this.generatedPagesImages[pageIndex] || this.generatedPagesImages[String(pageIndex)];
+            // Show toggle button
+            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'inline-flex';
+
+            // Default to viewing image if it exists
+            this.isViewingImage = true;
+            this.displayImageDirectly(imageData.imageUrl);
         } else {
+            // Hide toggle button
+            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'none';
+
+            this.isViewingImage = false;
             // Render sketch
             this.renderComic();
         }
@@ -604,7 +629,52 @@ class UIController {
                 generateImageBtn.disabled = false;
                 generateImageBtn.classList.remove('loading');
             }
+
+            // After generation, we are viewing the image
+            this.isViewingImage = true;
+            // Show toggle button
+            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'inline-flex';
         }
+    }
+
+    /**
+     * Toggle between comic image and layout view
+     */
+    async toggleView() {
+        if (this.isGenerating) return;
+
+        const pageIndex = this.pageManager.getCurrentPageIndex();
+        const imageUrl = this.generatedPagesImages[pageIndex]?.imageUrl;
+
+        if (!imageUrl) return;
+
+        // Toggle state
+        this.isViewingImage = !this.isViewingImage;
+
+        // Perform flip animation
+        const comicPage = document.getElementById('comic-page');
+        if (!comicPage) return;
+
+        // 1. Flip out
+        comicPage.classList.add('flip-out');
+
+        // 2. Wait for half animation
+        await this._delay(600);
+
+        // 3. Swap content
+        if (this.isViewingImage) {
+            this.displayImageDirectly(imageUrl);
+        } else {
+            this.renderComic();
+        }
+
+        // 4. Flip in (re-using the same animation classes for consistency)
+        comicPage.classList.remove('flip-out');
+        comicPage.classList.add('flip-in');
+
+        // 5. Cleanup
+        await this._delay(800);
+        comicPage.classList.remove('flip-in');
     }
 
     /**
@@ -743,6 +813,11 @@ class UIController {
             // Restore button state - only remove disabled and loading class
             this.generateAllBtn.disabled = false;
             this.generateAllBtn.classList.remove('loading');
+
+            // Explicitly show flip button if images were generated
+            if (Object.keys(this.generatedPagesImages).length > 0) {
+                if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'inline-flex';
+            }
         }
     }
 
@@ -1314,6 +1389,12 @@ class UIController {
         const session = this.sessionManager.getCurrentSession();
         if (!session) return;
 
+        console.log('loadSessionState for session:', session.id, {
+            hasComicData: !!session.comicData,
+            hasImages: !!(session.generatedImages && Object.keys(session.generatedImages).length > 0),
+            imagesCount: session.generatedImages ? Object.keys(session.generatedImages).length : 0
+        });
+
         // Restore style and language
         if (this.comicStyleSelect) {
             this.comicStyleSelect.value = session.style || 'doraemon';
@@ -1414,6 +1495,8 @@ class UIController {
         const coverBtn = document.getElementById('generate-cover-btn');
         if (coverBtn) coverBtn.style.display = 'none';
 
+        if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'none';
+
         // Load new session state
         this.loadSessionState();
 
@@ -1456,6 +1539,8 @@ class UIController {
 
         const coverBtn = document.getElementById('generate-cover-btn');
         if (coverBtn) coverBtn.style.display = 'none';
+
+        if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'none';
 
         // Update UI
         this.updateSessionSelector();
@@ -1672,6 +1757,10 @@ function generateXiaohongshuContent() {
 
 function generateCover() {
     if (app) app.generateCover();
+}
+
+function toggleView() {
+    if (app) app.toggleView();
 }
 
 function changeLanguage(lang) {

@@ -159,6 +159,8 @@ class ImageService:
 - Use fonts that properly support Chinese characters to prevent text corruption.
 - Ensure all Chinese text is correctly encoded and displayed without mojibake or garbled characters.
 - Text should be clear, sharp, and properly rendered in both speech bubbles and titles.
+- Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. You MUST carry over the exact facial features, hair styles, and **identical clothing/outfits**. Do not change what they are wearing unless the script explicitly requires a costume change.
+- Layout Reference: The last provided image is a sketch. Replicate its panel structure.
 """
         
         final_prompt = prompt_template.format(
