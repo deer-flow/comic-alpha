@@ -67,7 +67,8 @@ class ImageService:
     def generate_comic_cover(
         comic_style: str = 'doraemon',
         google_api_key: str = None,
-        reference_imgs: List[Union[str, Dict]] = None
+        reference_imgs: List[Union[str, Dict]] = None,
+        language: str = 'en'
     ) -> tuple[Optional[str], str]:
         """
         Generate comic cover image
@@ -76,12 +77,13 @@ class ImageService:
             comic_style: Style of the comic
             google_api_key: Google API key
             reference_imgs: List of reference image URLs
+            language: Language of the comic
             
         Returns:
             Tuple of (image_url, prompt)
         """
         # Create cover prompt
-        prompt = ImageService._create_cover_prompt(comic_style)
+        prompt = ImageService._create_cover_prompt(comic_style, language)
         
         # Prepare reference images list (extract URLs from objects if needed)
         processed_refs = []
@@ -168,8 +170,20 @@ class ImageService:
         return final_prompt
     
     @staticmethod
-    def _create_cover_prompt(comic_style: str) -> str:
+    def _create_cover_prompt(comic_style: str, language: str = 'en') -> str:
         """Create prompt for comic cover"""
+        language_map = {
+            'zh': 'Chinese (简体中文)',
+            'en': 'English',
+            'ja': 'Japanese (日本語)',
+            'ko': 'Korean (한국어)',
+            'fr': 'French (Français)',
+            'de': 'German (Deutsch)',
+            'es': 'Spanish (Español)'
+        }
+        
+        target_lang = language_map.get(language, 'English')
+        
         prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
 
 # Requirements:
@@ -178,10 +192,12 @@ class ImageService:
 - Make it eye-catching and dramatic.
 - High resolution, detailed, and professional quality.
 - No other text except the title.
+- The title text must be in {target_lang}.
 - Clear and sharp text for the title, do not repeat all the titles in reference images.
 - Vibrant colors and "Cover Art" aesthetic.
 - Only present one row one panel in the cover.
+- Ensure all characters in the title are correctly rendered and legible.
 """
-        final_prompt = prompt_template.format(comic_style=comic_style)
+        final_prompt = prompt_template.format(comic_style=comic_style, target_lang=target_lang)
         print(f"Cover Prompt: {final_prompt}")
         return final_prompt

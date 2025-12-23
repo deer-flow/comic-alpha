@@ -1229,6 +1229,7 @@ class UIController {
             this.showStatus(window.i18n.t('statusGeneratingCover') || 'Generating cover...', 'info');
 
             const comicStyle = this.comicStyleSelect.value;
+            const language = this.comicLanguageSelect.value;
 
             // Collect all generated page images as references
             const referenceImages = [];
@@ -1256,7 +1257,8 @@ class UIController {
             const result = await ComicAPI.generateCover(
                 googleApiKey,
                 comicStyle,
-                referenceImages
+                referenceImages,
+                language
             );
 
             if (result.success && result.image_url) {
