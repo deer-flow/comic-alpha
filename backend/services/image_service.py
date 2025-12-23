@@ -181,6 +181,7 @@ class ImageService:
 - Clear and sharp text for the title, do not repeat all the titles in reference images.
 - Vibrant colors and "Cover Art" aesthetic.
 - Only present one row one panel in the cover.
+- 生成的图片务必使用中文
 """
         final_prompt = prompt_template.format(comic_style=comic_style)
         print(f"Cover Prompt: {final_prompt}")

@@ -1428,10 +1428,18 @@ class UIController {
         // Save current session state
         this.saveCurrentSessionState();
 
-        // Create new session
+        // Get current options to reuse in new session
+        const currentOptions = {
+            style: this.comicStyleSelect.value,
+            language: this.comicLanguageSelect.value,
+            pageCount: parseInt(this.pageCountInput.value),
+            prompt: this.promptInput.value
+        };
+
+        // Create new session with current options
         const sessionCount = this.sessionManager.getAllSessions().length + 1;
         const defaultName = 'session ' + sessionCount;
-        const session = this.sessionManager.createSession(defaultName);
+        const session = this.sessionManager.createSession(defaultName, currentOptions);
 
         // Switch to new session
         this.sessionManager.switchSession(session.id);
@@ -1458,7 +1466,7 @@ class UIController {
         // Update UI
         this.updateSessionSelector();
 
-        // Load default state for new session (language, style)
+        // Load state for new session (will use the options we passed)
         this.loadSessionState();
     }
 
