@@ -162,6 +162,11 @@ body {
 
 .icon-btn svg {
     flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+#config-btn:hover svg {
+    transform: rotate(90deg);
 }
 
 /* Theme Toggle Button */
