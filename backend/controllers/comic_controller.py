@@ -48,14 +48,19 @@ def generate_comic():
         model = data.get('model', 'gpt-4o-mini')
         comic_style = data.get('comic_style', 'doraemon')
         language = data.get('language', 'zh')
-        
+        rows_per_page = data.get('rows_per_page', 4)
+
         # Validate page count
         if not isinstance(page_count, int) or page_count < 1 or page_count > 10:
             return jsonify({"error": "Page count must be between 1 and 10"}), 400
-        
+
+        # Validate rows per page
+        if not isinstance(rows_per_page, int) or rows_per_page < 1 or rows_per_page > 5:
+            return jsonify({"error": "Rows per page must be between 1 and 5"}), 400
+
         # Generate comic script
         service = ComicService(api_key, base_url, model, comic_style, language)
-        comic_pages = service.generate_comic_script(prompt, page_count)
+        comic_pages = service.generate_comic_script(prompt, page_count, rows_per_page)
         
         return jsonify({
             "success": True,

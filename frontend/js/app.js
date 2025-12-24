@@ -42,6 +42,7 @@ class UIController {
         this.googleApiKeyInput = document.getElementById('google-api-key');
         this.promptInput = document.getElementById('prompt-input');
         this.pageCountInput = document.getElementById('page-count');
+        this.rowsPerPageSelect = document.getElementById('rows-per-page');
         this.comicStyleSelect = document.getElementById('comic-style');
         this.comicLanguageSelect = document.getElementById('comic-language');
         this.jsonInput = document.getElementById('json-input');
@@ -138,6 +139,12 @@ class UIController {
 
         if (this.pageCountInput) {
             this.pageCountInput.addEventListener('change', () => {
+                this.saveCurrentSessionState();
+            });
+        }
+
+        if (this.rowsPerPageSelect) {
+            this.rowsPerPageSelect.addEventListener('change', () => {
                 this.saveCurrentSessionState();
             });
         }
@@ -274,6 +281,7 @@ class UIController {
         const apiKey = this.apiKeyInput.value.trim();
         const prompt = this.promptInput.value.trim();
         const pageCount = parseInt(this.pageCountInput.value) || 3;
+        const rowsPerPage = parseInt(this.rowsPerPageSelect.value) || 4;
         const comicStyle = this.comicStyleSelect.value;
         const language = this.comicLanguageSelect.value;
 
@@ -308,7 +316,8 @@ class UIController {
                 config.baseUrl,
                 config.model,
                 comicStyle,
-                language
+                language,
+                rowsPerPage
             );
 
             // Reset generated images when loading new JSON
@@ -567,8 +576,9 @@ class UIController {
             const element = this.renderer.getContainer();
             const sketchBase64 = await ComicExporter.getBase64WithoutText(element);
 
-            // Get current comic style
+            // Get current comic style and rows per page
             const comicStyle = this.comicStyleSelect.value;
+            const rowsPerPage = parseInt(this.rowsPerPageSelect.value) || 4;
 
             this.showStatus(window.i18n.t('statusGeneratingImage'), 'info');
 
@@ -589,7 +599,7 @@ class UIController {
             }
 
             // Call API to generate image with sketch as reference
-            const result = await ComicAPI.generateComicImage(pageData, googleApiKey, sketchBase64, previousPages, comicStyle);
+            const result = await ComicAPI.generateComicImage(pageData, googleApiKey, sketchBase64, previousPages, comicStyle, rowsPerPage);
 
             if (result.success && result.image_url) {
                 // Store the generated image for this page
@@ -704,6 +714,7 @@ class UIController {
         // Clear and reset generated images storage for batch generation
         this.generatedPagesImages = {};
         const comicStyle = this.comicStyleSelect.value;
+        const rowsPerPage = parseInt(this.rowsPerPageSelect.value) || 4;
         const originalPageIndex = this.pageManager.getCurrentPageIndex();
 
         try {
@@ -747,7 +758,8 @@ class UIController {
                     googleApiKey,
                     sketchBase64,
                     previousPages,  // Pass previous pages as extra_body parameter
-                    comicStyle
+                    comicStyle,
+                    rowsPerPage
                 );
 
                 if (result.success && result.image_url) {
@@ -1394,6 +1406,7 @@ class UIController {
             style: this.comicStyleSelect ? this.comicStyleSelect.value : 'doraemon',
             language: this.comicLanguageSelect ? this.comicLanguageSelect.value : 'en',
             pageCount: this.pageCountInput ? parseInt(this.pageCountInput.value) : 3,
+            rowsPerPage: this.rowsPerPageSelect ? parseInt(this.rowsPerPageSelect.value) : 4,
             prompt: this.promptInput ? this.promptInput.value : ''
         });
     }
@@ -1430,6 +1443,10 @@ class UIController {
 
         if (this.pageCountInput) {
             this.pageCountInput.value = session.pageCount || 3;
+        }
+
+        if (this.rowsPerPageSelect) {
+            this.rowsPerPageSelect.value = session.rowsPerPage || 4;
         }
 
         // Restore comic data
@@ -1536,7 +1553,8 @@ class UIController {
         const config = currentSession ? {
             style: currentSession.style,
             language: currentSession.language,
-            pageCount: currentSession.pageCount
+            pageCount: currentSession.pageCount,
+            rowsPerPage: currentSession.rowsPerPage
         } : {};
 
         // Create new session with current configuration

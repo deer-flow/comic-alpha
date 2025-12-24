@@ -32,14 +32,15 @@ class ComicService:
         self.comic_style = comic_style
         self.language = language
     
-    def generate_comic_script(self, prompt: str, page_count: int = 3) -> List[Dict[str, Any]]:
+    def generate_comic_script(self, prompt: str, page_count: int = 3, rows_per_page: int = 4) -> List[Dict[str, Any]]:
         """
         Generate comic script based on user prompt
-        
+
         Args:
             prompt: User's description of the comic
             page_count: Number of pages to generate
-            
+            rows_per_page: Number of rows per page (3-5)
+
         Returns:
             List of comic page data
         """
@@ -74,8 +75,8 @@ Please strictly follow the provided Schema structure to generate the storyboard 
 
 1. **Story Structure**:
    - Generate a complete and coherent {page_count}-page story.
-   - Each page (ComicPage) should contain 3-5 rows (Rows).
-   - **Pacing Control**: Each row can contain 1-3 panels (Panels). Avoid having only 1 panel per row entirely; use rows with 2-3 panels frequently to add dynamism and pacing variation.
+   - Each page (ComicPage) should contain approximately {rows_per_page} rows (Rows). You can vary slightly (±1 row) for better storytelling flow, but aim for around {rows_per_page} rows per page.
+   - **Pacing Control**: Each row can contain 1-2 panels (Panels). Mix single-panel rows (for emphasis) with two-panel rows (for dialogue/action) to create dynamic pacing. Avoid strictly alternating patterns - vary the layout naturally based on the story needs.
 
 2. **Visual Design (Critical)**:
    - **Row Height**: Dynamically adjust `height` based on the importance of the panels.

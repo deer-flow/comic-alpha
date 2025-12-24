@@ -14,9 +14,10 @@ class ComicAPI {
      * @param {string} model - Model name
      * @param {string} comicStyle - Comic style (e.g., 'doraemon', 'manga', etc.)
      * @param {string} language - Comic language (e.g., 'zh', 'en', 'ja')
+     * @param {number} rowsPerPage - Number of rows per page (3-5)
      * @returns {Promise<Object>} Generated comic pages
      */
-    static async generateComic(apiKey, prompt, pageCount, baseUrl, model, comicStyle = 'doraemon', language = 'zh') {
+    static async generateComic(apiKey, prompt, pageCount, baseUrl, model, comicStyle = 'doraemon', language = 'zh', rowsPerPage = 4) {
         try {
             const response = await fetch(`${API_BASE_URL}/generate`, {
                 method: 'POST',
@@ -30,7 +31,8 @@ class ComicAPI {
                     base_url: baseUrl,
                     model: model,
                     comic_style: comicStyle,
-                    language: language
+                    language: language,
+                    rows_per_page: rowsPerPage
                 })
             });
 
@@ -92,9 +94,11 @@ class ComicAPI {
      * @param {string} googleApiKey - Google API key for image generation
      * @param {string} referenceImg - Optional reference image URL
      * @param {Object} extraBody - Optional extra parameters
+     * @param {string} comicStyle - Comic style
+     * @param {number} rowsPerPage - Optional rows per page constraint
      * @returns {Promise<Object>} Generated image result
      */
-    static async generateComicImage(pageData, googleApiKey, referenceImg = null, extraBody = null, comicStyle = 'doraemon') {
+    static async generateComicImage(pageData, googleApiKey, referenceImg = null, extraBody = null, comicStyle = 'doraemon', rowsPerPage = null) {
         try {
             const response = await fetch(`${API_BASE_URL}/generate-image`, {
                 method: 'POST',
@@ -106,7 +110,8 @@ class ComicAPI {
                     google_api_key: googleApiKey,
                     reference_img: referenceImg,
                     extra_body: extraBody,
-                    comic_style: comicStyle
+                    comic_style: comicStyle,
+                    rows_per_page: rowsPerPage
                 })
             });
 

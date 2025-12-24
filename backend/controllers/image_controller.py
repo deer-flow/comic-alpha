@@ -37,16 +37,19 @@ def generate_comic_image():
         comic_style = data.get('comic_style', 'doraemon')
         reference_img = data.get('reference_img')
         extra_body = data.get('extra_body')
+        rows_per_page = data.get('rows_per_page')
 
         print(f"extra_body: {extra_body}")
-        
+        print(f"rows_per_page: {rows_per_page}")
+
         # Generate image using service
         image_url, prompt = ImageService.generate_comic_image(
             page_data=page_data,
             comic_style=comic_style,
             reference_img=reference_img,
             extra_body=extra_body,
-            google_api_key=google_api_key
+            google_api_key=google_api_key,
+            rows_per_page=rows_per_page
         )
         
         if not image_url:

@@ -52,6 +52,7 @@ class SessionManager {
             style: config.style || 'doraemon', // Use provided style or default
             language: config.language || ((window.i18n && typeof window.i18n.getLanguage === 'function') ? window.i18n.getLanguage() : 'en'),
             pageCount: config.pageCount || 3,
+            rowsPerPage: config.rowsPerPage || 4,
             prompt: '',
             createdAt: now,
             updatedAt: now
@@ -129,6 +130,7 @@ class SessionManager {
         if (data.style !== undefined) session.style = data.style;
         if (data.language !== undefined) session.language = data.language;
         if (data.pageCount !== undefined) session.pageCount = data.pageCount;
+        if (data.rowsPerPage !== undefined) session.rowsPerPage = data.rowsPerPage;
         if (data.prompt !== undefined) session.prompt = data.prompt;
 
         session.updatedAt = new Date().toISOString();

@@ -115,6 +115,15 @@
                 <input type="number" id="page-count" value="3" min="1" max="10" style="flex: 1;">
             </div>
             <div class="flex-row">
+                <label style="white-space: nowrap;" data-i18n="rowsPerPageLabel">每页行数:</label>
+                <select id="rows-per-page" style="flex: 1;">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="flex-row">
                 <label style="white-space: nowrap;" data-i18n="comicStyleLabel">漫画风格:</label>
                 <select id="comic-style" style="flex: 1;">
                     <option value="doraemon" data-i18n="styleDoraemon">哆啦A梦风格</option>
@@ -271,15 +280,15 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Application Modules -->
-    <script src="frontend/js/i18n.js?v=6"></script>
+    <script src="frontend/js/i18n.js?v=7"></script>
     <script src="frontend/js/theme.js?v=4"></script>
     <script src="frontend/js/config.js?v=4"></script>
-    <script src="frontend/js/api.js?v=4"></script>
+    <script src="frontend/js/api.js?v=5"></script>
     <script src="frontend/js/renderer.js?v=4"></script>
     <script src="frontend/js/pageManager.js?v=4"></script>
     <script src="frontend/js/exporter.js?v=4"></script>
-    <script src="frontend/js/sessionManager.js?v=1"></script>
-    <script src="frontend/js/app.js?v=9"></script>
+    <script src="frontend/js/sessionManager.js?v=2"></script>
+    <script src="frontend/js/app.js?v=10"></script>
 </body>
 
 </html>

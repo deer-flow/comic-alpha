@@ -37,6 +37,7 @@ const i18n = {
             // AI generation section
             promptPlaceholder: '描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事',
             pageCountLabel: '生成页数:',
+            rowsPerPageLabel: '每页行数:',
             comicStyleLabel: '漫画风格:',
             comicLanguageLabel: '漫画语言:',
             generateBtn: '✨ AI 生成多页分镜',
@@ -185,6 +186,7 @@ const i18n = {
             // AI generation section
             promptPlaceholder: 'Describe the comic you want, e.g.: Generate a story about Xiao Ming learning programming',
             pageCountLabel: 'Pages:',
+            rowsPerPageLabel: 'Rows per Page:',
             comicStyleLabel: 'Comic Style:',
             comicLanguageLabel: 'Comic Language:',
             generateBtn: '✨ Generate Comic',

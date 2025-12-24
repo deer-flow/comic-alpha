@@ -14,21 +14,28 @@ class ImageService:
         comic_style: str = 'doraemon',
         reference_img: Optional[Union[str, List[str]]] = None,
         extra_body: Optional[List] = None,
-        google_api_key: str = None
+        google_api_key: str = None,
+        rows_per_page: Optional[int] = None
     ) -> tuple[Optional[str], str]:
         """
         Generate comic image from page data
-        
+
         Args:
             page_data: Comic page data with rows and panels
             comic_style: Style of the comic
             reference_img: Optional reference image(s)
             extra_body: Optional extra body parameters (previous pages)
             google_api_key: Google API key for image generation
-            
+            rows_per_page: Optional number of rows to strictly limit (3-5)
+
         Returns:
             Tuple of (image_url, prompt)
         """
+        # Truncate page data to rows_per_page if specified
+        if rows_per_page is not None and 'rows' in page_data:
+            page_data = page_data.copy()  # Don't modify original
+            page_data['rows'] = page_data['rows'][:rows_per_page]
+
         # Convert page data to prompt with style
         prompt = ImageService._convert_page_to_prompt(page_data, comic_style)
         
