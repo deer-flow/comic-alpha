@@ -1,7 +1,7 @@
 """Social media content generation service"""
-import openai
 import json
 from typing import List, Dict, Any
+from openai import OpenAI
 
 
 class SocialMediaService:
@@ -11,8 +11,7 @@ class SocialMediaService:
         self.api_key = api_key
         self.base_url = base_url
         self.model = model
-        openai.api_key = api_key
-        openai.api_base = base_url
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
     
     def generate_social_content(self, comic_data: List[Dict], platform: str = 'xiaohongshu') -> Dict[str, Any]:
         """
@@ -96,7 +95,7 @@ Create a viral tweet that captures the FEELING and makes people say "this is so 
 
 写出让人"太懂了！"的文案，要有你的态度和感悟！"""
 
-        response = openai.ChatCompletion.create(
+        response = self.client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": system_prompt},
