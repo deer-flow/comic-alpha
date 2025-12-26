@@ -38,9 +38,11 @@ def generate_comic_image():
         reference_img = data.get('reference_img')
         extra_body = data.get('extra_body')
         rows_per_page = data.get('rows_per_page')
+        language = data.get('language', 'en')
 
         print(f"extra_body: {extra_body}")
         print(f"rows_per_page: {rows_per_page}")
+        print(f"language: {language}")
 
         # Generate image using service
         image_url, prompt = ImageService.generate_comic_image(
@@ -49,7 +51,8 @@ def generate_comic_image():
             reference_img=reference_img,
             extra_body=extra_body,
             google_api_key=google_api_key,
-            rows_per_page=rows_per_page
+            rows_per_page=rows_per_page,
+            language=language
         )
         
         if not image_url:

@@ -15,7 +15,8 @@ class ImageService:
         reference_img: Optional[Union[str, List[str]]] = None,
         extra_body: Optional[List] = None,
         google_api_key: str = None,
-        rows_per_page: Optional[int] = None
+        rows_per_page: Optional[int] = None,
+        language: str = 'en'
     ) -> tuple[Optional[str], str]:
         """
         Generate comic image from page data
@@ -27,6 +28,7 @@ class ImageService:
             extra_body: Optional extra body parameters (previous pages)
             google_api_key: Google API key for image generation
             rows_per_page: Optional number of rows to strictly limit (3-5)
+            language: Language of the comic content
 
         Returns:
             Tuple of (image_url, prompt)
@@ -36,8 +38,8 @@ class ImageService:
             page_data = page_data.copy()  # Don't modify original
             page_data['rows'] = page_data['rows'][:rows_per_page]
 
-        # Convert page data to prompt with style
-        prompt = ImageService._convert_page_to_prompt(page_data, comic_style)
+        # Convert page data to prompt with style and language
+        prompt = ImageService._convert_page_to_prompt(page_data, comic_style, language)
         
         # Prepare reference images (can be single image or array)
         reference_images = []
@@ -129,7 +131,7 @@ class ImageService:
         return response.content, content_type
     
     @staticmethod
-    def _convert_page_to_prompt(page_data: Dict[str, Any], comic_style: str = 'doraemon') -> str:
+    def _convert_page_to_prompt(page_data: Dict[str, Any], comic_style: str = 'doraemon', language: str = 'en') -> str:
         """Convert page data to image generation prompt"""
         panels = []
         if 'rows' in page_data:
@@ -139,7 +141,18 @@ class ImageService:
                         if 'text' in panel:
                             panels.append(f"Panel {i}-{j}: {panel['text']}")
 
-        prompt_template = """Using the style of {comic_style}, convert the storyline in each panel of the reference image into corresponding comic content.
+        language_map = {
+            'zh': 'Chinese (简体中文)',
+            'en': 'English',
+            'ja': 'Japanese (日本語)',
+            'ko': 'Korean (한국어)',
+            'fr': 'French (Français)',
+            'de': 'German (Deutsch)',
+            'es': 'Spanish (Español)'
+        }
+        target_lang = language_map.get(language, 'English')
+
+        prompt_template = """Using the style of {comic_style}, convert the storyline in each panel of the reference image into corresponding comic content. All text in the comic, including titles and speech bubbles, MUST be in {target_lang}.
 
 # Content:
 
@@ -158,13 +171,14 @@ class ImageService:
 - Include speech bubbles with short, clear dialogue to help tell the story.
 - Keep dialogue concise to avoid cluttering the image.
 - Ensure text is legible and spelled correctly.
+- All dialogue and titles MUST be in {target_lang}.
 - Display the title only once, typically at the top center of the comic page.
 - Do not duplicate the title in multiple locations.
 - Maintain consistent and uniform margins around the entire comic page.
 - Ensure equal spacing on all sides (top, bottom, left, right) for a professional appearance.
 - The comic title should use a {comic_style}-style font that matches the overall comic aesthetic.
-- Use fonts that properly support Chinese characters to prevent text corruption.
-- Ensure all Chinese text is correctly encoded and displayed without mojibake or garbled characters.
+- Use fonts that properly support {target_lang} characters to prevent text corruption.
+- Ensure all text is correctly encoded and displayed without mojibake or garbled characters.
 - Text should be clear, sharp, and properly rendered in both speech bubbles and titles.
 - Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. You MUST carry over the exact facial features, hair styles, and **identical clothing/outfits**. Do not change what they are wearing unless the script explicitly requires a costume change.
 - Layout Reference: The last provided image is a sketch. Replicate its panel structure.
@@ -173,9 +187,9 @@ class ImageService:
         final_prompt = prompt_template.format(
             comic_style=comic_style, 
             title=page_data.get('title', ''),
-            panels="\n".join(panels)
+            panels="\n".join(panels),
+            target_lang=target_lang
         )
-        print(final_prompt)
         return final_prompt
 
     @staticmethod
@@ -208,5 +222,4 @@ class ImageService:
 - Ensure all characters in the title are correctly rendered and legible.
 """
         final_prompt = prompt_template.format(comic_style=comic_style, target_lang=target_lang)
-        print(f"Cover Prompt: {final_prompt}")
         return final_prompt

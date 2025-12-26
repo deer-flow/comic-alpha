@@ -96,9 +96,10 @@ class ComicAPI {
      * @param {Object} extraBody - Optional extra parameters
      * @param {string} comicStyle - Comic style
      * @param {number} rowsPerPage - Optional rows per page constraint
+     * @param {string} language - Comic language (e.g., 'zh', 'en', 'ja')
      * @returns {Promise<Object>} Generated image result
      */
-    static async generateComicImage(pageData, googleApiKey, referenceImg = null, extraBody = null, comicStyle = 'doraemon', rowsPerPage = null) {
+    static async generateComicImage(pageData, googleApiKey, referenceImg = null, extraBody = null, comicStyle = 'doraemon', rowsPerPage = null, language = 'zh') {
         try {
             const response = await fetch(`${API_BASE_URL}/generate-image`, {
                 method: 'POST',
@@ -111,7 +112,8 @@ class ComicAPI {
                     reference_img: referenceImg,
                     extra_body: extraBody,
                     comic_style: comicStyle,
-                    rows_per_page: rowsPerPage
+                    rows_per_page: rowsPerPage,
+                    language: language
                 })
             });
 

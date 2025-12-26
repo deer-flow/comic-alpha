@@ -576,9 +576,10 @@ class UIController {
             const element = this.renderer.getContainer();
             const sketchBase64 = await ComicExporter.getBase64WithoutText(element);
 
-            // Get current comic style and rows per page
+            // Get current comic style, rows per page, and language
             const comicStyle = this.comicStyleSelect.value;
             const rowsPerPage = parseInt(this.rowsPerPageSelect.value) || 4;
+            const language = this.comicLanguageSelect.value;
 
             this.showStatus(window.i18n.t('statusGeneratingImage'), 'info');
 
@@ -599,7 +600,15 @@ class UIController {
             }
 
             // Call API to generate image with sketch as reference
-            const result = await ComicAPI.generateComicImage(pageData, googleApiKey, sketchBase64, previousPages, comicStyle, rowsPerPage);
+            const result = await ComicAPI.generateComicImage(
+                pageData,
+                googleApiKey,
+                sketchBase64,
+                previousPages,
+                comicStyle,
+                rowsPerPage,
+                language
+            );
 
             if (result.success && result.image_url) {
                 // Store the generated image for this page
@@ -759,7 +768,8 @@ class UIController {
                     sketchBase64,
                     previousPages,  // Pass previous pages as extra_body parameter
                     comicStyle,
-                    rowsPerPage
+                    rowsPerPage,
+                    this.comicLanguageSelect.value
                 );
 
                 if (result.success && result.image_url) {
