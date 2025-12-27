@@ -190,7 +190,7 @@ class ImageService:
             panels="\n".join(panels),
             target_lang=target_lang
         )
-        return final_prompt
+        return final_prompt.strip()
 
     @staticmethod
     def _create_cover_prompt(comic_style: str, language: str = 'en') -> str:
@@ -209,10 +209,17 @@ class ImageService:
         
         prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
 
+# Important Context:
+- The reference images provided show the story pages of this comic.
+- You MUST base the cover on the characters, scenes, and storyline shown in these reference images.
+- The cover should capture the essence and key moments from the story pages.
+- Use the same characters with consistent appearances as shown in the reference images.
+
 # Requirements:
 - The image must be a vertical comic book cover composition.
 - The art style must strictly follow {comic_style}.
-- Make it eye-catching and dramatic.
+- Make it eye-catching and dramatic while staying true to the story.
+- Feature the main characters and key scenes from the reference story pages.
 - High resolution, detailed, and professional quality.
 - No other text except the title.
 - The title text must be in {target_lang}.
@@ -220,6 +227,7 @@ class ImageService:
 - Vibrant colors and "Cover Art" aesthetic.
 - Only present one row one panel in the cover.
 - Ensure all characters in the title are correctly rendered and legible.
+- The cover should feel like a natural introduction to the story shown in the reference pages.
 """
         final_prompt = prompt_template.format(comic_style=comic_style, target_lang=target_lang)
-        return final_prompt
+        return final_prompt.strip()
