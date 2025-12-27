@@ -32,6 +32,7 @@ const i18n = {
             modelLabel: 'Model',
             customModelLabel: '自定义模型名称',
             customModelPlaceholder: '输入模型名称',
+            advancedSettings: '高级配置',
             saveConfigBtn: '💾 保存配置',
 
             // AI generation section
@@ -181,6 +182,7 @@ const i18n = {
             modelLabel: 'Model',
             customModelLabel: 'Custom Model Name',
             customModelPlaceholder: 'Enter model name',
+            advancedSettings: 'Advanced Configuration',
             saveConfigBtn: '💾 Save Config',
 
             // AI generation section

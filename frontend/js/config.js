@@ -47,11 +47,11 @@ class ConfigManager {
     static getCurrentConfig() {
         const config = this.loadConfig();
         let modelName = config.model;
-        
+
         if (config.model === 'custom' && config.customModel) {
             modelName = config.customModel;
         }
-        
+
         return {
             baseUrl: config.baseUrl,
             model: modelName
@@ -78,11 +78,13 @@ class ConfigManager {
      */
     static saveApiKey(apiKey) {
         try {
-            if (apiKey.trim()) {
-                localStorage.setItem('comic_api_key', apiKey.trim());
-                return true;
+            const trimmedKey = apiKey.trim();
+            if (trimmedKey) {
+                localStorage.setItem('comic_api_key', trimmedKey);
+            } else {
+                localStorage.removeItem('comic_api_key');
             }
-            return false;
+            return true;
         } catch (e) {
             console.error('Failed to save API key:', e);
             return false;
@@ -109,11 +111,13 @@ class ConfigManager {
      */
     static saveGoogleApiKey(apiKey) {
         try {
-            if (apiKey.trim()) {
-                localStorage.setItem('comic_google_api_key', apiKey.trim());
-                return true;
+            const trimmedKey = apiKey.trim();
+            if (trimmedKey) {
+                localStorage.setItem('comic_google_api_key', trimmedKey);
+            } else {
+                localStorage.removeItem('comic_google_api_key');
             }
-            return false;
+            return true;
         } catch (e) {
             console.error('Failed to save Google API key:', e);
             return false;

@@ -27,10 +27,11 @@ def generate_xiaohongshu_content():
             return jsonify({"error": "No JSON data provided"}), 400
         
         api_key = data.get('api_key')
+        google_api_key = data.get('google_api_key')
         comic_data = data.get('comic_data')
         
-        if not api_key:
-            return jsonify({"error": "API key is required"}), 400
+        if not api_key and not google_api_key:
+            return jsonify({"error": "Either OpenAI API key or Google API key is required"}), 400
         
         if not comic_data:
             return jsonify({"error": "Comic data is required"}), 400
@@ -41,7 +42,7 @@ def generate_xiaohongshu_content():
         platform = data.get('platform', 'xiaohongshu')
         
         # Generate social content using service
-        service = SocialMediaService(api_key, base_url, model)
+        service = SocialMediaService(api_key, base_url, model, google_api_key=google_api_key)
         result = service.generate_social_content(comic_data, platform)
         
         return jsonify({

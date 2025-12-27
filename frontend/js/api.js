@@ -15,9 +15,10 @@ class ComicAPI {
      * @param {string} comicStyle - Comic style (e.g., 'doraemon', 'manga', etc.)
      * @param {string} language - Comic language (e.g., 'zh', 'en', 'ja')
      * @param {number} rowsPerPage - Number of rows per page (3-5)
+     * @param {string} googleApiKey - Google API key for fallback or direct use
      * @returns {Promise<Object>} Generated comic pages
      */
-    static async generateComic(apiKey, prompt, pageCount, baseUrl, model, comicStyle = 'doraemon', language = 'zh', rowsPerPage = 4) {
+    static async generateComic(apiKey, prompt, pageCount, baseUrl, model, comicStyle = 'doraemon', language = 'zh', rowsPerPage = 4, googleApiKey = null) {
         try {
             const response = await fetch(`${API_BASE_URL}/generate`, {
                 method: 'POST',
@@ -32,7 +33,8 @@ class ComicAPI {
                     model: model,
                     comic_style: comicStyle,
                     language: language,
-                    rows_per_page: rowsPerPage
+                    rows_per_page: rowsPerPage,
+                    google_api_key: googleApiKey
                 })
             });
 
@@ -137,9 +139,10 @@ class ComicAPI {
      * @param {string} baseUrl - OpenAI API base URL
      * @param {string} model - Model name
      * @param {string} platform - Platform type ('xiaohongshu' or 'twitter')
+     * @param {string} googleApiKey - Google API key for fallback
      * @returns {Promise<Object>} Generated social media content
      */
-    static async generateSocialMediaContent(apiKey, comicData, baseUrl, model, platform = 'xiaohongshu') {
+    static async generateSocialMediaContent(apiKey, comicData, baseUrl, model, platform = 'xiaohongshu', googleApiKey = null) {
         try {
             const response = await fetch(`${API_BASE_URL}/generate-xiaohongshu`, {
                 method: 'POST',
@@ -151,7 +154,8 @@ class ComicAPI {
                     comic_data: comicData,
                     base_url: baseUrl,
                     model: model,
-                    platform: platform
+                    platform: platform,
+                    google_api_key: googleApiKey
                 })
             });
 

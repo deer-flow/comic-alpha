@@ -77,33 +77,50 @@
                     </div>
                 </div>
                 <div>
-                    <label data-i18n="apiKeyLabel">OpenAI API Key</label>
-                    <input type="password" id="api-key" data-i18n="apiKeyPlaceholder" placeholder="输入你的 OpenAI API Key">
-                </div>
-                <div>
                     <label data-i18n="googleApiKeyLabel">Google API Key</label>
                     <input type="password" id="google-api-key" data-i18n="googleApiKeyPlaceholder"
-                        placeholder="输入你的 Google API Key (用于图片生成)">
+                        placeholder="输入你的 Google API Key (用于智能生成)">
                 </div>
-                <div>
-                    <label data-i18n="baseUrlLabel">Base URL</label>
-                    <input type="text" id="base-url" data-i18n="baseUrlPlaceholder"
-                        placeholder="https://api.openai.com/v1">
+
+                <!-- Advanced Config Toggle -->
+                <div class="advanced-toggle" onclick="toggleAdvancedSettings()"
+                    style="cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 10px 0; font-size: 0.9em; color: var(--text-secondary);">
+                    <svg id="advanced-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" style="transition: transform 0.3s;">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span data-i18n="advancedSettings">高级配置</span>
                 </div>
-                <div>
-                    <label data-i18n="modelLabel">Model</label>
-                    <select id="model-select">
-                        <option value="gpt-4o-mini">gpt-4o-mini</option>
-                        <option value="gpt-4o">gpt-4o</option>
-                        <option value="gpt-4-turbo">gpt-4-turbo</option>
-                        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                        <option value="custom" data-i18n="customModelLabel">自定义模型</option>
-                    </select>
+
+                <!-- Advanced Config Panel -->
+                <div id="advanced-config"
+                    style="display: none; border-left: 2px solid var(--border-color); padding-left: 15px; margin-bottom: 10px;">
+                    <div style="margin-bottom: 15px;">
+                        <label data-i18n="apiKeyLabel">OpenAI API Key</label>
+                        <input type="password" id="api-key" data-i18n="apiKeyPlaceholder"
+                            placeholder="输入你的 OpenAI API Key">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label data-i18n="baseUrlLabel">Base URL</label>
+                        <input type="text" id="base-url" data-i18n="baseUrlPlaceholder"
+                            placeholder="https://api.openai.com/v1">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label data-i18n="modelLabel">Model</label>
+                        <select id="model-select">
+                            <option value="gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4o">gpt-4o</option>
+                            <option value="gpt-4-turbo">gpt-4-turbo</option>
+                            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            <option value="custom" data-i18n="customModelLabel">自定义模型</option>
+                        </select>
+                    </div>
+                    <div id="custom-model-input" style="display: none;">
+                        <label data-i18n="customModelLabel">自定义模型名称</label>
+                        <input type="text" id="custom-model" data-i18n="customModelPlaceholder" placeholder="输入模型名称">
+                    </div>
                 </div>
-                <div id="custom-model-input" style="display: none;">
-                    <label data-i18n="customModelLabel">自定义模型名称</label>
-                    <input type="text" id="custom-model" data-i18n="customModelPlaceholder" placeholder="输入模型名称">
-                </div>
+
                 <button onclick="saveConfig()" class="save-config-btn" data-i18n="saveConfigBtn">💾 保存配置</button>
             </div>
         </div>
@@ -288,7 +305,7 @@
     <script src="frontend/js/pageManager.js?v=4"></script>
     <script src="frontend/js/exporter.js?v=4"></script>
     <script src="frontend/js/sessionManager.js?v=2"></script>
-    <script src="frontend/js/app.js?v=10"></script>
+    <script src="frontend/js/app.js?v=11"></script>
 </body>
 
 </html>

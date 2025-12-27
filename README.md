@@ -175,13 +175,16 @@ Then visit `http://localhost:8000`
 ### Configure API
 
 1. Click the **⚙️ Settings** button in the top right corner
-2. Enter the OpenAI API Base URL (default: `https://api.openai.com/v1`)
-3. Select a model (recommended: `gpt-4o-mini`)
+2. **Google API Key (Mandatory)**: Enter your Google API Key. This is required for core script generation and smart features.
+3. **Advanced Settings (Optional)**: Click to expand if you want to use OpenAI models:
+   - Enter your OpenAI API Key
+   - Enter the OpenAI API Base URL (default: `https://api.openai.com/v1`)
+   - Select an OpenAI model (e.g., `gpt-4o-mini`)
 4. Click **💾 Save Configuration**
 
 ### Generate Comics
 
-1. Enter your OpenAI API Key
+1. Ensure your API is configured (specifically the **Google API Key**)
 2. Describe the comic content you want in the text box
 3. Set the number of pages to generate (1-10 pages)
 4. Click **AI Generate Multi-page Panels**
@@ -234,7 +237,8 @@ POST /api/generate
 Request Body:
 ```json
 {
-  "api_key": "your-openai-api-key",
+  "google_api_key": "your-google-api-key",
+  "api_key": "your-openai-api-key (optional)",
   "prompt": "Describe comic content",
   "page_count": 3,
   "base_url": "https://api.openai.com/v1",
@@ -312,7 +316,8 @@ POST /api/generate-xiaohongshu
 Request Body:
 ```json
 {
-  "api_key": "your-openai-api-key",
+  "google_api_key": "your-google-api-key",
+  "api_key": "your-openai-api-key (optional)",
   "comic_data": [
     {
       "title": "Page 1 Title",

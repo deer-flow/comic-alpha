@@ -210,16 +210,10 @@ class UIController {
         }
 
         // Load saved API key
-        const savedApiKey = ConfigManager.loadApiKey();
-        if (savedApiKey) {
-            this.apiKeyInput.value = savedApiKey;
-        }
+        this.apiKeyInput.value = ConfigManager.loadApiKey();
 
         // Load saved Google API key
-        const savedGoogleApiKey = ConfigManager.loadGoogleApiKey();
-        if (savedGoogleApiKey) {
-            this.googleApiKeyInput.value = savedGoogleApiKey;
-        }
+        this.googleApiKeyInput.value = ConfigManager.loadGoogleApiKey();
 
         // Set up renderer onChange callback
         this.renderer.setOnChange((data) => {
@@ -248,16 +242,8 @@ class UIController {
         const baseUrl = this.baseUrlInput.value.trim();
         const model = this.modelSelect.value;
         const customModel = this.customModelInput.value.trim();
-
-        if (!baseUrl) {
-            alert(window.i18n.t('alertNoBaseUrl'));
-            return;
-        }
-
-        if (model === 'custom' && !customModel) {
-            alert(window.i18n.t('alertNoCustomModel'));
-            return;
-        }
+        const apiKey = this.apiKeyInput.value.trim();
+        const googleApiKey = this.googleApiKeyInput.value.trim();
 
         const config = {
             baseUrl: baseUrl,
@@ -265,10 +251,29 @@ class UIController {
             customModel: customModel
         };
 
-        if (ConfigManager.saveConfig(config)) {
+        const configSaved = ConfigManager.saveConfig(config);
+        const apiKeySaved = ConfigManager.saveApiKey(apiKey);
+        const googleApiKeySaved = ConfigManager.saveGoogleApiKey(googleApiKey);
+
+        if (configSaved && apiKeySaved && googleApiKeySaved) {
             alert(window.i18n.t('alertConfigSaved'));
         } else {
             alert(window.i18n.t('alertConfigFailed'));
+        }
+    }
+
+    /**
+     * Toggle advanced configuration section
+     */
+    toggleAdvancedSettings() {
+        const advancedConfig = document.getElementById('advanced-config');
+        const chevron = document.getElementById('advanced-chevron');
+        if (advancedConfig.style.display === 'none') {
+            advancedConfig.style.display = 'block';
+            chevron.style.transform = 'rotate(90deg)';
+        } else {
+            advancedConfig.style.display = 'none';
+            chevron.style.transform = 'rotate(0deg)';
         }
     }
 
@@ -279,6 +284,7 @@ class UIController {
         if (this.isGenerating) return;
 
         const apiKey = this.apiKeyInput.value.trim();
+        const googleApiKey = this.googleApiKeyInput.value.trim();
         const prompt = this.promptInput.value.trim();
         const pageCount = parseInt(this.pageCountInput.value) || 3;
         const rowsPerPage = parseInt(this.rowsPerPageSelect.value) || 4;
@@ -286,8 +292,8 @@ class UIController {
         const language = this.comicLanguageSelect.value;
 
         // Validate inputs
-        if (!apiKey) {
-            alert(window.i18n.t('alertNoApiKey'));
+        if (!apiKey && !googleApiKey) {
+            alert(window.i18n.t('alertNoApiKey') || 'Please enter OpenAI API Key or Google API Key');
             return;
         }
 
@@ -317,7 +323,8 @@ class UIController {
                 config.model,
                 comicStyle,
                 language,
-                rowsPerPage
+                rowsPerPage,
+                googleApiKey
             );
 
             // Reset generated images when loading new JSON
@@ -1043,9 +1050,10 @@ class UIController {
      */
     async generateXiaohongshuContent() {
         const apiKey = this.apiKeyInput.value.trim();
+        const googleApiKey = this.googleApiKeyInput.value.trim();
 
-        if (!apiKey) {
-            alert(window.i18n.t('alertNoApiKey'));
+        if (!apiKey && !googleApiKey) {
+            alert(window.i18n.t('alertNoApiKey') || 'Please enter OpenAI API Key or Google API Key');
             return;
         }
 
@@ -1079,7 +1087,8 @@ class UIController {
                 comicData,
                 config.baseUrl,
                 config.model,
-                platform
+                platform,
+                googleApiKey
             );
 
             if (result.success) {
@@ -1769,6 +1778,10 @@ window.UIController = UIController;
 // Global functions for onclick handlers (backward compatibility)
 function toggleConfig() {
     if (app) app.toggleConfig();
+}
+
+function toggleAdvancedSettings() {
+    if (app) app.toggleAdvancedSettings();
 }
 
 function saveConfig() {

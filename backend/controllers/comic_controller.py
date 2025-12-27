@@ -34,10 +34,11 @@ def generate_comic():
             return jsonify({"error": "No JSON data provided"}), 400
         
         api_key = data.get('api_key')
+        google_api_key = data.get('google_api_key')
         prompt = data.get('prompt')
         
-        if not api_key:
-            return jsonify({"error": "API key is required"}), 400
+        if not api_key and not google_api_key:
+            return jsonify({"error": "Either OpenAI API key or Google API key is required"}), 400
         
         if not prompt:
             return jsonify({"error": "Prompt is required"}), 400
@@ -59,7 +60,7 @@ def generate_comic():
             return jsonify({"error": "Rows per page must be between 1 and 5"}), 400
 
         # Generate comic script
-        service = ComicService(api_key, base_url, model, comic_style, language)
+        service = ComicService(api_key, base_url, model, comic_style, language, google_api_key=google_api_key)
         comic_pages = service.generate_comic_script(prompt, page_count, rows_per_page)
         
         return jsonify({

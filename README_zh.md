@@ -175,13 +175,16 @@ python -m http.server 8000
 ### 配置 API
 
 1. 点击右上角的 **⚙️ 配置** 按钮
-2. 输入 OpenAI API 的 Base URL（默认：`https://api.openai.com/v1`）
-3. 选择模型（推荐：`gpt-4o-mini`）
+2. **Google API Key (必填)**：输入您的 Google API Key。这是核心脚本生成和智能功能所必需的。
+3. **高级配置 (可选)**：点击展开以配置 OpenAI 相关设置：
+   - 输入 OpenAI API Key
+   - 输入 OpenAI API 的 Base URL（默认：`https://api.openai.com/v1`）
+   - 选择 OpenAI 模型（如 `gpt-4o-mini`）
 4. 点击 **💾 保存配置**
 
 ### 生成漫画
 
-1. 输入你的 OpenAI API Key
+1. 确保已配置 API（特别是 **Google API Key**）
 2. 在文本框中描述你想要的漫画内容
 3. 设置生成页数（1-10页）
 4. 点击 **AI 生成多页分镜**
@@ -234,7 +237,8 @@ POST /api/generate
 请求体：
 ```json
 {
-  "api_key": "your-openai-api-key",
+  "google_api_key": "your-google-api-key",
+  "api_key": "your-openai-api-key (可选)",
   "prompt": "描述漫画内容",
   "page_count": 3,
   "base_url": "https://api.openai.com/v1",
@@ -312,7 +316,8 @@ POST /api/generate-xiaohongshu
 请求体：
 ```json
 {
-  "api_key": "your-openai-api-key",
+  "google_api_key": "your-google-api-key",
+  "api_key": "your-openai-api-key (可选)",
   "comic_data": [
     {
       "title": "第1页标题",

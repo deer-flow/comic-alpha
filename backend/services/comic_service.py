@@ -5,6 +5,8 @@ from typing import List, Dict, Any
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
+from google import genai
+from google.genai import types
 
 
 class Panel(BaseModel):
@@ -23,14 +25,15 @@ class ComicScript(BaseModel):
 
 
 class ComicService:
-    """Comic script generator using OpenAI API"""
+    """Comic script generator using OpenAI or Google API"""
     
-    def __init__(self, api_key: str, base_url: str = "https://api.openai.com/v1", model: str = "gpt-4o-mini", comic_style: str = "doraemon", language: str = "zh"):
+    def __init__(self, api_key: str = None, base_url: str = "https://api.openai.com/v1", model: str = "gpt-4o-mini", comic_style: str = "doraemon", language: str = "zh", google_api_key: str = None):
         self.api_key = api_key
         self.base_url = base_url
         self.model = model
         self.comic_style = comic_style
         self.language = language
+        self.google_api_key = google_api_key
     
     def generate_comic_script(self, prompt: str, page_count: int = 3, rows_per_page: int = 4) -> List[Dict[str, Any]]:
         """
@@ -90,19 +93,47 @@ Please strictly follow the provided Schema structure to generate the storyboard 
    - All content (titles, descriptions) must follow the language requirement: {language_instruction}"""
 
         try:
-            llm = ChatOpenAI(model=self.model, openai_api_key=self.api_key, base_url=self.base_url, temperature=0.7, max_tokens=3000)
-            structured_llm = llm.with_structured_output(ComicScript)
-            response: ComicScript = structured_llm.invoke(
-                input=[
-                    SystemMessage(content=system_prompt),
-                    HumanMessage(content=prompt)
-                ],
-            )
-            
-            # Parse and validate JSON
-            comic_data = [elem.model_dump() for elem in response.pages]
-            
-            return comic_data
+            if self.api_key:
+                llm = ChatOpenAI(model=self.model, openai_api_key=self.api_key, base_url=self.base_url, temperature=0.7, max_tokens=3000)
+                structured_llm = llm.with_structured_output(ComicScript)
+                response: ComicScript = structured_llm.invoke(
+                    input=[
+                        SystemMessage(content=system_prompt),
+                        HumanMessage(content=prompt)
+                    ],
+                )
+                
+                # Parse and validate JSON
+                comic_data = [elem.model_dump() for elem in response.pages]
+                return comic_data
+            else:
+                # Fallback to Google Gemini
+                client = genai.Client(api_key=self.google_api_key)
+                response = client.models.generate_content(
+                    model="gemini-3-flash-preview",
+                    contents=[system_prompt, prompt],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=ComicScript,
+                        thinking_config=types.ThinkingConfig(thinking_level="low")
+                    )
+                )
+                
+                # Parse Google response
+                comic_script_data = response.parsed
+                if not comic_script_data:
+                    # Retry with raw JSON parsing if needed
+                    text_response = response.text
+                    # Extract JSON from potential markdown
+                    if "```json" in text_response:
+                        text_response = text_response.split("```json")[1].split("```")[0].strip()
+                    elif "```" in text_response:
+                        text_response = text_response.split("```")[1].split("```")[0].strip()
+                    
+                    data = json.loads(text_response)
+                    comic_script_data = ComicScript(**data)
+                
+                return [elem.model_dump() for elem in comic_script_data.pages]
             
         except Exception as e:
             raise Exception(f"AI generation failed: {str(e)}")

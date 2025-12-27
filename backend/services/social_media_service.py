@@ -2,16 +2,22 @@
 import json
 from typing import List, Dict, Any
 from openai import OpenAI
+from google import genai
+from google.genai import types
 
 
 class SocialMediaService:
-    """Social media content generator for Xiaohongshu and Twitter"""
+    """Social media content generator for Xiaohongshu and Twitter using OpenAI or Google"""
     
-    def __init__(self, api_key: str, base_url: str = "https://api.openai.com/v1", model: str = "gpt-4o-mini"):
+    def __init__(self, api_key: str = None, base_url: str = "https://api.openai.com/v1", model: str = "gpt-4o-mini", google_api_key: str = None):
         self.api_key = api_key
         self.base_url = base_url
         self.model = model
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.google_api_key = google_api_key
+        if api_key:
+            self.client = OpenAI(api_key=api_key, base_url=base_url)
+        else:
+            self.client = None
     
     def generate_social_content(self, comic_data: List[Dict], platform: str = 'xiaohongshu') -> Dict[str, Any]:
         """
@@ -95,17 +101,29 @@ Create a viral tweet that captures the FEELING and makes people say "this is so 
 
 写出让人"太懂了！"的文案，要有你的态度和感悟！"""
 
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.8,
-            max_tokens=1000
-        )
-        
-        generated_text = response.choices[0].message.content.strip()
+        if self.client:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.8,
+                max_tokens=1000
+            )
+            generated_text = response.choices[0].message.content.strip()
+        else:
+            # Fallback to Google Gemini
+            client = genai.Client(api_key=self.google_api_key)
+            response = client.models.generate_content(
+                model="gemini-3-flash-preview",
+                contents=[system_prompt, user_prompt],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    thinking_config=types.ThinkingConfig(thinking_level="low")
+                )
+            )
+            generated_text = response.text
         
         # Extract JSON from markdown code blocks if present
         if '```json' in generated_text:
