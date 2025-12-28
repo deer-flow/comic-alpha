@@ -113,6 +113,7 @@ const i18n = {
             alertDownloadFailed: '下载失败，请右键点击图片另存为',
             alertDownloadAlt: '无法自动下载，请在新窗口中右键点击图片另存为',
             alertCopyFailed: '复制失败，请手动复制',
+            alertFileTooLarge: '文件太大。请上传小于 5MB 的图片。',
 
             // Error messages
             errorJsonFormat: 'JSON 格式错误',
@@ -263,6 +264,7 @@ const i18n = {
             alertDownloadFailed: 'Download failed, please right-click and save image',
             alertDownloadAlt: 'Cannot auto-download, please right-click and save image in new window',
             alertCopyFailed: 'Copy failed, please copy manually',
+            alertFileTooLarge: 'File is too large. Please upload an image smaller than 5MB.',
 
             // Error messages
             errorJsonFormat: 'JSON format error',

@@ -185,7 +185,7 @@ Then visit `http://localhost:8000`
 ### Generate Comics
 
 1. Ensure your API is configured (specifically the **Google API Key**)
-2. Describe the comic content you want in the text box
+2. Describe the comic content you want in the text box (supports direct image paste as a reference)
 3. Set the number of pages to generate (1-10 pages)
 4. Click **AI Generate Multi-page Panels**
 5. Wait for generation to complete
@@ -200,15 +200,32 @@ Then visit `http://localhost:8000`
 - Click **🎨 Generate All Pages Comics** to batch generate complete comics for all pages
   - Automatically iterates through all pages, generating complete comics page by page
   - Intelligently uses previous pages as references to maintain character and style consistency
-  - After generation, you can preview all images
-  - Supports individual download or batch download of all generated images
-- Click **📱 Generate Xiaohongshu Content** to automatically generate content suitable for Xiaohongshu publishing (New Feature!)
+- Click **🎨 Generate Cover** to create a stunning cover for your comic
+  - Automatically uses generated story pages as references
+  - Ensures character consistency between the cover and the story
+- Click **📱 Generate Xiaohongshu Content** to automatically generate content suitable for Xiaohongshu publishing
   - Automatically generates attractive titles based on comic content
   - Generates 200-500 word body content with emojis and paragraphs
   - Automatically generates 5-8 relevant topic tags
   - Supports one-click copy of all content
 - Click **Download Current Page** to export a single page sketch
 - Click **Download All Pages** to batch export all sketch pages
+
+## 🖼️ Reference Image Feature
+
+The project includes a powerful reference image system to ensure consistency and high quality:
+
+### 1. Character & Item Consistency
+- **Mechanism**: The system supports **pasting images** (directly via Ctrl+V in the prompt box) or using **previously generated pages** as references for the AI.
+- **Benefit**: The AI extracts details like facial features, hairstyles, clothing, and specific props, ensuring characters remain consistent throughout the entire comic series without unexpected "face changes" or outfit swaps.
+
+### 2. Layout & Composition Reference
+- **Mechanism**: The live sketch preview (rendered from the JSON script) is used as a layout reference for the AI.
+- **Benefit**: The AI precisely replicates the panel layout, character positions, and composition from the sketch, achieving a "what you see is what you get" result.
+
+### 3. Cover Consistency
+- **Mechanism**: When generating a cover, all story pages are used as references.
+- **Benefit**: This ensures the characters and art style on the cover perfectly match the content of the comic, creating a professional and cohesive look.
 
 ## API Documentation
 

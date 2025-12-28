@@ -10,6 +10,9 @@ class UIController {
         this.isViewingImage = false;
         this.generatedPagesImages = {}; // Store generated images by page index for reference
 
+        // Initialize reference image state
+        this.referenceImage = null;
+
         // Initialize session manager
         this.sessionManager = new SessionManager();
 
@@ -68,6 +71,10 @@ class UIController {
         this.pageNav = document.getElementById('page-nav');
         this.renderCurrentBtn = document.getElementById('render-current-btn');
         this.toggleViewBtn = document.getElementById('toggle-view-btn');
+
+        // Reference Image elements
+        this.imagePreviewContainer = document.getElementById('image-preview-container');
+        this.referenceImagePreview = document.getElementById('reference-image-preview');
 
         console.log('UIController elements initialized:', {
             renderCurrentBtn: !!this.renderCurrentBtn,
@@ -134,6 +141,11 @@ class UIController {
         if (this.promptInput) {
             this.promptInput.addEventListener('blur', () => {
                 this.saveCurrentSessionState();
+            });
+
+            // Handle image paste
+            this.promptInput.addEventListener('paste', (e) => {
+                this.handleImagePaste(e);
             });
         }
 
@@ -275,6 +287,74 @@ class UIController {
             advancedConfig.style.display = 'none';
             chevron.style.transform = 'rotate(0deg)';
         }
+    }
+
+    /**
+     * Handle image paste into prompt input
+     * @param {ClipboardEvent} event - Paste event
+     */
+    handleImagePaste(event) {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+
+        for (const item of items) {
+            if (item.type.indexOf('image') !== -1) {
+                const file = item.getAsFile();
+                this._processImageFile(file);
+                // Prevent default paste if it's an image
+                // event.preventDefault(); // Don't prevent default, user might be pasting text AND image (rare) or just text
+            }
+        }
+    }
+
+    /**
+     * Process an image file (from paste or upload)
+     * @param {File} file 
+     */
+    _processImageFile(file) {
+        if (!file) return;
+
+        // Check file size (e.g., limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert(window.i18n.t('alertFileTooLarge') || 'File is too large. Please upload an image smaller than 5MB.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const base64Image = e.target.result;
+            this.referenceImage = base64Image;
+
+            // Update UI
+            if (this.referenceImagePreview) {
+                this.referenceImagePreview.src = base64Image;
+            }
+            if (this.imagePreviewContainer) {
+                this.imagePreviewContainer.style.display = 'flex';
+            }
+
+            // Save to session state
+            this.saveCurrentSessionState();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /**
+     * Remove the uploaded reference image
+     */
+    removeReferenceImage() {
+        this.referenceImage = null;
+        if (this.referenceImageInput) {
+            this.referenceImageInput.value = '';
+        }
+        if (this.imagePreviewContainer) {
+            this.imagePreviewContainer.style.display = 'none';
+        }
+        if (this.referenceImagePreview) {
+            this.referenceImagePreview.src = '';
+        }
+
+        // Save to session state
+        this.saveCurrentSessionState();
     }
 
     /**
@@ -606,6 +686,12 @@ class UIController {
                 }
             }
 
+            // Add user uploaded reference image if available
+            if (this.referenceImage) {
+                if (!previousPages) previousPages = [];
+                previousPages.unshift(this.referenceImage);
+            }
+
             // Call API to generate image with sketch as reference
             const result = await ComicAPI.generateComicImage(
                 pageData,
@@ -765,6 +851,12 @@ class UIController {
                     .reverse();
                 if (prevImages.length > 0) {
                     previousPages = prevImages;
+                }
+
+                // Add user uploaded reference image if available
+                if (this.referenceImage) {
+                    if (!previousPages) previousPages = [];
+                    previousPages.unshift(this.referenceImage);
                 }
 
                 // Generate image with sketch and previous pages as reference
@@ -1375,6 +1467,11 @@ class UIController {
                 });
             }
 
+            // Add user uploaded reference image if available
+            if (this.referenceImage) {
+                referenceImages.unshift(this.referenceImage);
+            }
+
             console.log('[Cover] Reference images to send:', referenceImages);
 
             // Call API
@@ -1426,7 +1523,8 @@ class UIController {
             language: this.comicLanguageSelect ? this.comicLanguageSelect.value : 'en',
             pageCount: this.pageCountInput ? parseInt(this.pageCountInput.value) : 3,
             rowsPerPage: this.rowsPerPageSelect ? parseInt(this.rowsPerPageSelect.value) : 4,
-            prompt: this.promptInput ? this.promptInput.value : ''
+            prompt: this.promptInput ? this.promptInput.value : '',
+            referenceImage: this.referenceImage
         });
     }
 
@@ -1466,6 +1564,25 @@ class UIController {
 
         if (this.rowsPerPageSelect) {
             this.rowsPerPageSelect.value = session.rowsPerPage || 4;
+        }
+
+        // Restore reference image
+        if (session.referenceImage) {
+            this.referenceImage = session.referenceImage;
+            if (this.referenceImagePreview) {
+                this.referenceImagePreview.src = this.referenceImage;
+            }
+            if (this.imagePreviewContainer) {
+                this.imagePreviewContainer.style.display = 'flex';
+            }
+        } else {
+            this.referenceImage = null;
+            if (this.referenceImagePreview) {
+                this.referenceImagePreview.src = '';
+            }
+            if (this.imagePreviewContainer) {
+                this.imagePreviewContainer.style.display = 'none';
+            }
         }
 
         // Restore comic data
@@ -1798,6 +1915,10 @@ function renderComic() {
 
 function downloadComicImage() {
     if (app) app.downloadCurrentPage();
+}
+
+function removeReferenceImage() {
+    if (app) app.removeReferenceImage();
 }
 
 

@@ -238,6 +238,12 @@
 
     <!-- Prompt Input Section - Fixed at Bottom -->
     <div class="prompt-section-fixed">
+        <div id="image-preview-container" class="image-preview-container" style="display: none;">
+            <div class="image-preview-wrapper">
+                <img id="reference-image-preview" src="" alt="Reference Preview">
+                <button onclick="removeReferenceImage()" class="remove-image-btn">&times;</button>
+            </div>
+        </div>
         <div class="prompt-wrapper">
             <textarea id="prompt-input" data-i18n="promptPlaceholder"
                 placeholder="描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事"></textarea>

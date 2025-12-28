@@ -180,7 +180,7 @@ class ImageService:
 - Use fonts that properly support {target_lang} characters to prevent text corruption.
 - Ensure all text is correctly encoded and displayed without mojibake or garbled characters.
 - Text should be clear, sharp, and properly rendered in both speech bubbles and titles.
-- Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. You MUST carry over the exact facial features, hair styles, and **identical clothing/outfits**. Do not change what they are wearing unless the script explicitly requires a costume change.
+- Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. These may also include user-provided reference images for maintaining character, prop, or item consistency. You MUST carry over the exact facial features, hair styles, and **identical clothing/outfits**. Do not change what they are wearing unless the script explicitly requires a costume change.
 - Layout Reference: The last provided image is a sketch. Replicate its panel structure.
 """
         
@@ -213,7 +213,7 @@ class ImageService:
 - The reference images provided show the story pages of this comic.
 - You MUST base the cover on the characters, scenes, and storyline shown in these reference images.
 - The cover should capture the essence and key moments from the story pages.
-- Use the same characters with consistent appearances as shown in the reference images.
+- Use the same characters, props, and items with consistent appearances as shown in the reference images.
 
 # Requirements:
 - The image must be a vertical comic book cover composition.
