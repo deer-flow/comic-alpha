@@ -90,22 +90,25 @@ def generate_comic_cover_endpoint():
         google_api_key = data.get('google_api_key')
         if not google_api_key:
             return jsonify({"error": "Google API key is required"}), 400
-        
+
         comic_style = data.get('comic_style', 'doraemon')
         reference_imgs = data.get('reference_imgs')
         language = data.get('language', 'en')
-        
+        custom_requirements = data.get('custom_requirements', '')
+
         print(f"[Cover Generation] Language: {language}")
+        print(f"[Cover Generation] Custom requirements: {custom_requirements}")
         print(f"[Cover Generation] Reference images count: {len(reference_imgs) if reference_imgs else 0}")
         if reference_imgs:
             print(f"[Cover Generation] First reference: {reference_imgs[0] if len(reference_imgs) > 0 else 'None'}")
-        
+
         # Generate cover using service
         image_url, prompt = ImageService.generate_comic_cover(
             comic_style=comic_style,
             google_api_key=google_api_key,
             reference_imgs=reference_imgs,
-            language=language
+            language=language,
+            custom_requirements=custom_requirements
         )
         
         if not image_url:

@@ -562,7 +562,7 @@ class UIController {
 
             // Default to viewing image if it exists
             this.isViewingImage = true;
-            this.displayImageDirectly(imageData.imageUrl);
+            this.displayImageDirectly(pageIndex);
         } else {
             // Hide toggle button
             if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'none';
@@ -607,8 +607,23 @@ class UIController {
             // If we have a generated image, download it directly
             const currentPageIndex = this.pageManager.getCurrentPageIndex();
             if (this.generatedPagesImages && this.generatedPagesImages[currentPageIndex]) {
-                await this.downloadImageFromUrl(this.generatedPagesImages[currentPageIndex].imageUrl);
-                return;
+                const pageData = this.generatedPagesImages[currentPageIndex];
+
+                // Handle new version format
+                if (pageData.versions && pageData.versions.length > 0) {
+                    const currentVersionIndex = pageData.currentVersion || 0;
+                    const currentVersionData = pageData.versions[currentVersionIndex];
+                    if (currentVersionData && currentVersionData.imageUrl) {
+                        await this.downloadImageFromUrl(currentVersionData.imageUrl);
+                        return;
+                    }
+                }
+
+                // Handle legacy format
+                if (pageData.imageUrl) {
+                    await this.downloadImageFromUrl(pageData.imageUrl);
+                    return;
+                }
             }
 
             // Otherwise download the sketch canvas
@@ -678,7 +693,24 @@ class UIController {
                 const prevImages = [];
                 for (let i = currentPageIndex - 1; i >= 0 && prevImages.length < 6; i--) {
                     if (this.generatedPagesImages[i]) {
-                        prevImages.unshift(this.generatedPagesImages[i]);
+                        const page = this.generatedPagesImages[i];
+
+                        // Handle new version format
+                        if (page.versions && page.versions.length > 0) {
+                            const currentVersionIndex = page.currentVersion || 0;
+                            const currentVersionData = page.versions[currentVersionIndex];
+                            if (currentVersionData && currentVersionData.imageUrl) {
+                                prevImages.unshift({
+                                    pageIndex: page.pageIndex,
+                                    imageUrl: currentVersionData.imageUrl,
+                                    pageTitle: page.pageTitle
+                                });
+                            }
+                        }
+                        // Handle legacy format
+                        else if (page.imageUrl) {
+                            prevImages.unshift(page);
+                        }
                     }
                 }
                 if (prevImages.length > 0) {
@@ -704,15 +736,53 @@ class UIController {
             );
 
             if (result.success && result.image_url) {
-                // Store the generated image for this page
-                this.generatedPagesImages[currentPageIndex] = {
-                    pageIndex: currentPageIndex,
-                    imageUrl: result.image_url,
-                    pageTitle: pageData.title || `Page ${currentPageIndex + 1}`
-                };
+                // Store the generated image for this page with version history
+                const timestamp = Date.now();
+                const pageTitle = pageData.title || `Page ${currentPageIndex + 1}`;
+
+                // Check if we already have versions for this page
+                if (!this.generatedPagesImages[currentPageIndex]) {
+                    // First generation - create new entry
+                    this.generatedPagesImages[currentPageIndex] = {
+                        pageIndex: currentPageIndex,
+                        pageTitle: pageTitle,
+                        currentVersion: 0,
+                        versions: [{
+                            imageUrl: result.image_url,
+                            timestamp: timestamp,
+                            version: 1
+                        }]
+                    };
+                } else {
+                    // Subsequent generation - append new version
+                    const pageData = this.generatedPagesImages[currentPageIndex];
+
+                    // Handle legacy format (single image object) - convert to version array
+                    if (pageData.imageUrl && !pageData.versions) {
+                        pageData.versions = [{
+                            imageUrl: pageData.imageUrl,
+                            timestamp: pageData.timestamp || Date.now() - 1000,
+                            version: 1
+                        }];
+                        delete pageData.imageUrl;
+                        delete pageData.timestamp;
+                    }
+
+                    // Add new version
+                    const newVersion = pageData.versions.length + 1;
+                    pageData.versions.push({
+                        imageUrl: result.image_url,
+                        timestamp: timestamp,
+                        version: newVersion
+                    });
+
+                    // Set current version to the latest
+                    pageData.currentVersion = pageData.versions.length - 1;
+                    pageData.pageTitle = pageTitle;
+                }
 
                 // Show the generated image on canvas with flip animation
-                await this.showGeneratedImageOnCanvas(result.image_url);
+                await this.showGeneratedImageOnCanvas(currentPageIndex);
                 this.showStatus(window.i18n.t('statusImageSuccess'), 'success');
                 setTimeout(() => this.hideStatus(), 3000);
 
@@ -756,9 +826,12 @@ class UIController {
         if (this.isGenerating) return;
 
         const pageIndex = this.pageManager.getCurrentPageIndex();
-        const imageUrl = this.generatedPagesImages[pageIndex]?.imageUrl;
+        const pageData = this.generatedPagesImages[pageIndex];
 
-        if (!imageUrl) return;
+        // Check if we have image data (either legacy format or new version format)
+        if (!pageData) return;
+        const hasImage = pageData.imageUrl || (pageData.versions && pageData.versions.length > 0);
+        if (!hasImage) return;
 
         // Toggle state
         this.isViewingImage = !this.isViewingImage;
@@ -775,7 +848,7 @@ class UIController {
 
         // 3. Swap content
         if (this.isViewingImage) {
-            this.displayImageDirectly(imageUrl);
+            this.displayImageDirectly(pageIndex);
         } else {
             this.renderComic();
         }
@@ -848,7 +921,27 @@ class UIController {
                     .filter(img => img.pageIndex < i)
                     .sort((a, b) => b.pageIndex - a.pageIndex)
                     .slice(0, 6)
-                    .reverse();
+                    .reverse()
+                    .map(page => {
+                        // Handle new version format
+                        if (page.versions && page.versions.length > 0) {
+                            const currentVersionIndex = page.currentVersion || 0;
+                            const currentVersionData = page.versions[currentVersionIndex];
+                            if (currentVersionData && currentVersionData.imageUrl) {
+                                return {
+                                    pageIndex: page.pageIndex,
+                                    imageUrl: currentVersionData.imageUrl,
+                                    pageTitle: page.pageTitle
+                                };
+                            }
+                        }
+                        // Handle legacy format - return as is
+                        if (page.imageUrl) {
+                            return page;
+                        }
+                        return null;
+                    })
+                    .filter(page => page !== null);
                 if (prevImages.length > 0) {
                     previousPages = prevImages;
                 }
@@ -872,16 +965,53 @@ class UIController {
                 );
 
                 if (result.success && result.image_url) {
-                    // Store in both local array and member variable
-                    const imageData = {
-                        pageIndex: i,
-                        imageUrl: result.image_url,
-                        pageTitle: pageData.title || `Page ${i + 1}`
-                    };
-                    this.generatedPagesImages[i] = imageData;
+                    // Store the generated image with version history (same logic as generateFinalImage)
+                    const timestamp = Date.now();
+                    const pageTitle = pageData.title || `Page ${i + 1}`;
+
+                    // Check if we already have versions for this page
+                    if (!this.generatedPagesImages[i]) {
+                        // First generation - create new entry
+                        this.generatedPagesImages[i] = {
+                            pageIndex: i,
+                            pageTitle: pageTitle,
+                            currentVersion: 0,
+                            versions: [{
+                                imageUrl: result.image_url,
+                                timestamp: timestamp,
+                                version: 1
+                            }]
+                        };
+                    } else {
+                        // Subsequent generation - append new version
+                        const existingPageData = this.generatedPagesImages[i];
+
+                        // Handle legacy format (single image object) - convert to version array
+                        if (existingPageData.imageUrl && !existingPageData.versions) {
+                            existingPageData.versions = [{
+                                imageUrl: existingPageData.imageUrl,
+                                timestamp: existingPageData.timestamp || Date.now() - 1000,
+                                version: 1
+                            }];
+                            delete existingPageData.imageUrl;
+                            delete existingPageData.timestamp;
+                        }
+
+                        // Add new version
+                        const newVersion = existingPageData.versions.length + 1;
+                        existingPageData.versions.push({
+                            imageUrl: result.image_url,
+                            timestamp: timestamp,
+                            version: newVersion
+                        });
+
+                        // Set current version to the latest
+                        existingPageData.currentVersion = existingPageData.versions.length - 1;
+                        existingPageData.pageTitle = pageTitle;
+                    }
 
                     // Show the generated image on canvas with flip animation
-                    await this.showGeneratedImageOnCanvas(result.image_url);
+                    await this.showGeneratedImageOnCanvas(i);
 
                     // Save session state after each page generation
                     this.saveCurrentSessionState();
@@ -955,11 +1085,33 @@ class UIController {
 
     /**
      * Show generated image on the comic canvas directly with a flip animation
-     * @param {string} imageUrl - URL of the generated image
+     * @param {number} pageIndex - Index of the page to display
      */
-    async showGeneratedImageOnCanvas(imageUrl) {
+    async showGeneratedImageOnCanvas(pageIndex) {
         const comicPage = document.getElementById('comic-page');
         if (!comicPage) return;
+
+        const pageData = this.generatedPagesImages[pageIndex];
+        if (!pageData) return;
+
+        // Handle legacy format
+        if (pageData.imageUrl && !pageData.versions) {
+            pageData.versions = [{
+                imageUrl: pageData.imageUrl,
+                timestamp: pageData.timestamp || Date.now(),
+                version: 1
+            }];
+            pageData.currentVersion = 0;
+            delete pageData.imageUrl;
+            delete pageData.timestamp;
+        }
+
+        const currentVersionIndex = pageData.currentVersion || 0;
+        const currentVersionData = pageData.versions[currentVersionIndex];
+        if (!currentVersionData) return;
+
+        const imageUrl = currentVersionData.imageUrl;
+        const versionNumber = currentVersionData.version;
 
         // 1. Flip out
         comicPage.classList.add('flip-out');
@@ -973,6 +1125,22 @@ class UIController {
         // Create container for image and button
         const container = document.createElement('div');
         container.className = 'generated-image-container';
+
+        // Create version number overlay
+        const versionOverlay = document.createElement('div');
+        versionOverlay.className = 'version-overlay';
+        versionOverlay.innerText = versionNumber;
+        versionOverlay.style.cssText = `
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 72px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        `;
 
         // Create image
         const img = document.createElement('img');
@@ -1004,6 +1172,7 @@ class UIController {
             this.downloadImageFromUrl(imageUrl);
         };
 
+        container.appendChild(versionOverlay);
         container.appendChild(img);
         container.appendChild(downloadBtn);
         comicPage.appendChild(container);
@@ -1022,17 +1191,55 @@ class UIController {
 
     /**
      * Display generated image directly on canvas without animation (for navigation)
-     * @param {string} imageUrl - URL of the generated image
+     * @param {number} pageIndex - Index of the page to display
      */
-    displayImageDirectly(imageUrl) {
+    displayImageDirectly(pageIndex) {
         const comicPage = document.getElementById('comic-page');
         if (!comicPage) return;
+
+        const pageData = this.generatedPagesImages[pageIndex];
+        if (!pageData) return;
+
+        // Handle legacy format
+        if (pageData.imageUrl && !pageData.versions) {
+            pageData.versions = [{
+                imageUrl: pageData.imageUrl,
+                timestamp: pageData.timestamp || Date.now(),
+                version: 1
+            }];
+            pageData.currentVersion = 0;
+            delete pageData.imageUrl;
+            delete pageData.timestamp;
+        }
+
+        const currentVersionIndex = pageData.currentVersion || 0;
+        const currentVersionData = pageData.versions[currentVersionIndex];
+        if (!currentVersionData) return;
+
+        const imageUrl = currentVersionData.imageUrl;
+        const versionNumber = currentVersionData.version;
 
         comicPage.innerHTML = '';
 
         // Create container for image and button
         const container = document.createElement('div');
         container.className = 'generated-image-container';
+
+        // Create version number overlay
+        const versionOverlay = document.createElement('div');
+        versionOverlay.className = 'version-overlay';
+        versionOverlay.innerText = versionNumber;
+        versionOverlay.style.cssText = `
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 72px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        `;
 
         // Create image
         const img = document.createElement('img');
@@ -1064,6 +1271,7 @@ class UIController {
             this.downloadImageFromUrl(imageUrl);
         };
 
+        container.appendChild(versionOverlay);
         container.appendChild(img);
         container.appendChild(downloadBtn);
         comicPage.appendChild(container);
@@ -1424,14 +1632,62 @@ class UIController {
     }
 
     /**
-     * Generate comic cover
+     * Show cover customization panel
      */
-    async generateCover() {
+    showCoverCustomPanel() {
+        const panel = document.getElementById('cover-custom-panel');
+        if (panel) {
+            panel.style.display = 'block';
+            // Focus on the input
+            const input = document.getElementById('cover-custom-input');
+            if (input) {
+                setTimeout(() => input.focus(), 100);
+            }
+            // Add click outside to close
+            setTimeout(() => {
+                document.addEventListener('click', this.handleClickOutsideCoverPanel);
+            }, 100);
+        }
+    }
+
+    /**
+     * Hide cover customization panel
+     */
+    hideCoverCustomPanel() {
+        const panel = document.getElementById('cover-custom-panel');
+        if (panel) {
+            panel.style.display = 'none';
+            document.removeEventListener('click', this.handleClickOutsideCoverPanel);
+        }
+    }
+
+    /**
+     * Handle click outside cover panel to close it
+     */
+    handleClickOutsideCoverPanel = (event) => {
+        const panel = document.getElementById('cover-custom-panel');
+        const btn = document.getElementById('generate-cover-btn');
+        if (panel && !panel.contains(event.target) && !btn.contains(event.target)) {
+            this.hideCoverCustomPanel();
+        }
+    }
+
+    /**
+     * Generate comic cover with custom requirements
+     */
+    async generateCoverWithCustom() {
         const googleApiKey = this.googleApiKeyInput.value.trim();
         if (!googleApiKey) {
             alert(window.i18n.t('alertNoGoogleApiKey') || 'Please configure Google API Key in settings');
             return;
         }
+
+        // Get custom requirements from textarea
+        const customInput = document.getElementById('cover-custom-input');
+        const customRequirements = customInput ? customInput.value.trim() : '';
+
+        // Hide the panel
+        this.hideCoverCustomPanel();
 
         const coverBtn = document.getElementById('generate-cover-btn');
         const originalText = coverBtn.innerHTML;
@@ -1461,8 +1717,24 @@ class UIController {
 
                 // Add full page objects to reference list
                 sortedPages.forEach(page => {
-                    if (page && page.imageUrl) {
-                        referenceImages.push(page);
+                    if (page) {
+                        // Handle new version format
+                        if (page.versions && page.versions.length > 0) {
+                            const currentVersionIndex = page.currentVersion || 0;
+                            const currentVersionData = page.versions[currentVersionIndex];
+                            if (currentVersionData && currentVersionData.imageUrl) {
+                                // Create a page object with the current version's imageUrl
+                                referenceImages.push({
+                                    pageIndex: page.pageIndex,
+                                    imageUrl: currentVersionData.imageUrl,
+                                    pageTitle: page.pageTitle
+                                });
+                            }
+                        }
+                        // Handle legacy format
+                        else if (page.imageUrl) {
+                            referenceImages.push(page);
+                        }
                     }
                 });
             }
@@ -1473,13 +1745,15 @@ class UIController {
             }
 
             console.log('[Cover] Reference images to send:', referenceImages);
+            console.log('[Cover] Custom requirements:', customRequirements);
 
             // Call API
             const result = await ComicAPI.generateCover(
                 googleApiKey,
                 comicStyle,
                 referenceImages,
-                language
+                language,
+                customRequirements
             );
 
             if (result.success && result.image_url) {
@@ -1944,7 +2218,19 @@ function generateXiaohongshuContent() {
 }
 
 function generateCover() {
-    if (app) app.generateCover();
+    if (app) app.showCoverCustomPanel();
+}
+
+function showCoverCustomPanel() {
+    if (app) app.showCoverCustomPanel();
+}
+
+function hideCoverCustomPanel() {
+    if (app) app.hideCoverCustomPanel();
+}
+
+function generateCoverWithCustom() {
+    if (app) app.generateCoverWithCustom();
 }
 
 function toggleView() {

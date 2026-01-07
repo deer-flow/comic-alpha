@@ -1390,6 +1390,42 @@ button.loading .spinner {
     transform: scale(0.95);
 }
 
+/* Version Indicators */
+.version-indicators {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+.version-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.version-indicator:hover {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
+.version-indicator.active {
+    background: rgba(0, 122, 255, 0.8);
+    color: white;
+    border-color: rgba(0, 122, 255, 1);
+}
+
 /* Prompt Buttons - Additional Actions */
 .render-btn,
 .generate-all-btn,
@@ -1457,6 +1493,124 @@ button.loading .spinner {
     color: var(--disabled-text);
     box-shadow: none;
     transform: none;
+}
+
+/* ========================================
+   Cover Customization Floating Panel
+   ======================================== */
+.cover-custom-panel {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    background: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: slideInUp 0.2s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cover-custom-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.cover-custom-optional {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.cover-custom-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--ai-section-bg);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.cover-custom-input:focus {
+    outline: none;
+    border-color: #007aff;
+    background: var(--container-bg);
+}
+
+.cover-custom-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.cover-custom-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.cover-custom-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.cover-custom-btn.cancel {
+    background: var(--ai-section-bg);
+    color: var(--text-secondary);
+}
+
+.cover-custom-btn.cancel:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.cover-custom-btn.generate {
+    background: #007aff;
+    color: white;
+}
+
+.cover-custom-btn.generate:hover {
+    background: #0051d5;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.cover-custom-btn:active {
+    transform: scale(0.98);
+}
+
+/* Make sure the prompt-wrapper has relative positioning for the floating panel */
+.prompt-wrapper {
+    position: relative;
 }
 
 /* ========================================

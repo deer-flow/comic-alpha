@@ -36,3 +36,4 @@ backend/static/images/*.png
 # Uncomment below to ignore all generated assets:
 # assets/examples/*.png
 # assets/examples/*.jpg
+/CLAUDE.md

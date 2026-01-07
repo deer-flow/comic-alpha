@@ -138,6 +138,10 @@ const i18n = {
             btnDownloadImage: '下载图片',
             statusGeneratingCover: '封面生成中...',
             modalCoverTitle: '漫画封面',
+            coverCustomTitle: '自定义封面要求',
+            coverCustomOptional: '（可选）',
+            coverCustomPlaceholder: '例如：使用对比色和大字报风格。左边是哭泣的打工人，右边是喝咖啡的闪电，中间大字"贫富差距？"',
+            coverCustomGenerate: '直接生成',
 
 
             // Session management
@@ -289,6 +293,10 @@ const i18n = {
             btnDownloadImage: 'Download Image',
             statusGeneratingCover: 'Generating Cover...',
             modalCoverTitle: 'Comic Cover',
+            coverCustomTitle: 'Custom Cover Requirements',
+            coverCustomOptional: '(Optional)',
+            coverCustomPlaceholder: 'For example: Use contrasting colors and propaganda poster style. Left side: crying office worker, Right side: lightning drinking coffee, Center: large text "Wealth Gap?"',
+            coverCustomGenerate: 'Generate',
 
 
             // Session management

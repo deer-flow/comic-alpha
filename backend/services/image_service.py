@@ -77,22 +77,24 @@ class ImageService:
         comic_style: str = 'doraemon',
         google_api_key: str = None,
         reference_imgs: List[Union[str, Dict]] = None,
-        language: str = 'en'
+        language: str = 'en',
+        custom_requirements: str = ''
     ) -> tuple[Optional[str], str]:
         """
         Generate comic cover image
-        
+
         Args:
             comic_style: Style of the comic
             google_api_key: Google API key
             reference_imgs: List of reference image URLs
             language: Language of the comic
-            
+            custom_requirements: User's custom cover requirements (optional)
+
         Returns:
             Tuple of (image_url, prompt)
         """
         # Create cover prompt
-        prompt = ImageService._create_cover_prompt(comic_style, language)
+        prompt = ImageService._create_cover_prompt(comic_style, language, custom_requirements)
         
         # Prepare reference images list (extract URLs from objects if needed)
         processed_refs = []
@@ -122,7 +124,7 @@ class ImageService:
         Returns:
             Tuple of (image_content, content_type)
         """
-        response = requests.get(image_url, timeout=30)
+        response = requests.get(image_url, timeout=60)
         
         if response.status_code != 200:
             raise Exception(f"Failed to fetch image: {response.status_code}")
@@ -193,7 +195,7 @@ class ImageService:
         return final_prompt.strip()
 
     @staticmethod
-    def _create_cover_prompt(comic_style: str, language: str = 'en') -> str:
+    def _create_cover_prompt(comic_style: str, language: str = 'en', custom_requirements: str = '') -> str:
         """Create prompt for comic cover"""
         language_map = {
             'zh': 'Chinese (简体中文)',
@@ -204,9 +206,9 @@ class ImageService:
             'de': 'German (Deutsch)',
             'es': 'Spanish (Español)'
         }
-        
+
         target_lang = language_map.get(language, 'English')
-        
+
         prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
 
 # Important Context:
@@ -228,6 +230,25 @@ class ImageService:
 - Only present one row one panel in the cover.
 - Ensure all characters in the title are correctly rendered and legible.
 - The cover should feel like a natural introduction to the story shown in the reference pages.
-"""
-        final_prompt = prompt_template.format(comic_style=comic_style, target_lang=target_lang)
+{custom_section}"""
+
+        # Add custom requirements if provided
+        custom_section = ""
+        if custom_requirements and custom_requirements.strip():
+            custom_section = f"""
+
+# IMPORTANT - User's Custom Requirements (MUST FOLLOW STRICTLY):
+The user has provided specific requirements below. These are CRITICAL and take HIGHEST PRIORITY.
+You MUST strictly follow these custom requirements while maintaining the basic comic cover style.
+
+User Requirements:
+{custom_requirements.strip()}
+
+** You MUST implement ALL of the above user requirements. They are mandatory. **"""
+
+        final_prompt = prompt_template.format(
+            comic_style=comic_style,
+            target_lang=target_lang,
+            custom_section=custom_section
+        )
         return final_prompt.strip()

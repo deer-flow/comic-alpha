@@ -296,6 +296,29 @@
                 </svg>
                 <span data-i18n="btnGenerateCover">生成封面</span>
             </button>
+
+            <!-- Cover Customization Floating Panel -->
+            <div id="cover-custom-panel" class="cover-custom-panel" style="display: none;">
+                <div class="cover-custom-header">
+                    <span data-i18n="coverCustomTitle">自定义封面要求</span>
+                    <span class="cover-custom-optional" data-i18n="coverCustomOptional">（可选）</span>
+                </div>
+                <textarea
+                    id="cover-custom-input"
+                    class="cover-custom-input"
+                    data-i18n-placeholder="coverCustomPlaceholder"
+                    placeholder="例如：使用对比色和大字报风格。左边是哭泣的打工人，右边是喝咖啡的闪电，中间大字'贫富差距？'"
+                    rows="4"
+                ></textarea>
+                <div class="cover-custom-actions">
+                    <button class="cover-custom-btn cancel" onclick="hideCoverCustomPanel()">
+                        <span data-i18n="btnCancel">取消</span>
+                    </button>
+                    <button class="cover-custom-btn generate" onclick="generateCoverWithCustom()">
+                        <span data-i18n="coverCustomGenerate">直接生成</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
