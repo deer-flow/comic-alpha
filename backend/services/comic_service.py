@@ -12,6 +12,7 @@ from google.genai import types
 class Panel(BaseModel):
     text: str = Field(description="分镜描述文字")
 
+
 class Row(BaseModel):
     height: str = Field(description="行高度，例如 '180px'")
     panels: List[Panel]
