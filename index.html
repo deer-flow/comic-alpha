@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>comic-perfect</title>
     <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
-    <link rel="stylesheet" href="frontend/css/style.css?v=4">
+    <link rel="stylesheet" href="frontend/css/style.css?v=9">
 </head>
 
 <body>
@@ -198,7 +198,37 @@
 
     <!-- Right Preview Container -->
     <div class="preview-container">
-        <div class="edit-hint" data-i18n="editHint" style="display: none;">💡 点击任意面板可直接编辑内容</div>
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state">
+            <div class="empty-state-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+                    <rect x="6" y="6" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="13" y="6" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="6" y="13" width="12" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+            </div>
+            <h3 class="empty-state-title" data-i18n="emptyStateTitle">开始创作你的漫画</h3>
+            <p class="empty-state-desc" data-i18n="emptyStateDesc">在下方输入你的故事描述，AI 将为你生成精美的漫画分镜</p>
+            <div class="empty-state-steps">
+                <div class="step-item">
+                    <span class="step-num">1</span>
+                    <span class="step-text" data-i18n="emptyStep1">输入故事描述</span>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step-item">
+                    <span class="step-num">2</span>
+                    <span class="step-text" data-i18n="emptyStep2">AI 生成分镜</span>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step-item">
+                    <span class="step-num">3</span>
+                    <span class="step-text" data-i18n="emptyStep3">渲染精美图像</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-hint" data-i18n="editHint" style="display: none;">点击任意面板可直接编辑内容</div>
 
         <div id="comic-page" style="display: none;">
             <!-- Content will be inserted here by JavaScript -->
@@ -245,57 +275,63 @@
             </div>
         </div>
         <div class="prompt-wrapper">
-            <textarea id="prompt-input" data-i18n="promptPlaceholder"
-                placeholder="描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事"></textarea>
-            <button onclick="generateWithAI()" class="run-btn" id="run-btn" title="Run">
-                <span class="btn-text">Run</span>
+            <!-- Primary input row -->
+            <div class="prompt-input-row">
+                <textarea id="prompt-input" data-i18n="promptPlaceholder"
+                    placeholder="描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事"></textarea>
+                <button onclick="generateWithAI()" class="run-btn" id="run-btn" title="Run">
+                    <span class="btn-text">Run</span>
+                    <span class="shortcut-hint">⌘↵</span>
+                </button>
+            </div>
 
-                <span class="shortcut-hint">⌘ ↵</span>
-            </button>
-            <!-- Render Current Page Button -->
-            <button onclick="generateFinalImage()" class="render-btn" id="render-current-btn" style="display: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
-                    <path d="M21 15L16 10L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                <span data-i18n="renderThisPage">渲染本页</span>
-            </button>
-            <!-- Toggle View Button -->
-            <button onclick="toggleView()" class="toggle-view-btn" id="toggle-view-btn" style="display: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 2L12 5L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M9 22L12 19L9 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M12 5C7.03 5 3 9.03 3 14C3 15.58 3.41 17.06 4.12 18.34" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M12 19C16.97 19 21 14.97 21 10C21 8.42 20.59 6.94 19.88 5.66" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span data-i18n="toggleView">翻转预览</span>
-            </button>
-            <!-- Generate All Pages Button -->
-            <button onclick="generateAllPagesImages()" class="generate-all-btn" id="generate-all-btn"
-                style="display: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        fill="none" />
-                </svg>
-                <span data-i18n="generateAllText">生成全部</span>
-            </button>
-            <!-- Generate Cover Button -->
-            <button onclick="generateCover()" class="generate-cover-btn" id="generate-cover-btn" style="display: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
-                    <path d="M12 8L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    <path d="M8 12L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span data-i18n="btnGenerateCover">生成封面</span>
-            </button>
+            <!-- Secondary actions row -->
+            <div class="prompt-actions-row" id="prompt-actions-row">
+                <!-- Render Current Page Button -->
+                <button onclick="generateFinalImage()" class="render-btn" id="render-current-btn" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                        <path d="M21 15L16 10L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <span data-i18n="renderThisPage">渲染本页</span>
+                </button>
+                <!-- Toggle View Button -->
+                <button onclick="toggleView()" class="toggle-view-btn" id="toggle-view-btn" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 2L12 5L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M9 22L12 19L9 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M12 5C7.03 5 3 9.03 3 14C3 15.58 3.41 17.06 4.12 18.34" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M12 19C16.97 19 21 14.97 21 10C21 8.42 20.59 6.94 19.88 5.66" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span data-i18n="toggleView">翻转预览</span>
+                </button>
+                <!-- Generate All Pages Button -->
+                <button onclick="generateAllPagesImages()" class="generate-all-btn" id="generate-all-btn"
+                    style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            fill="none" />
+                    </svg>
+                    <span data-i18n="generateAllText">生成全部</span>
+                </button>
+                <!-- Generate Cover Button -->
+                <button onclick="generateCover()" class="generate-cover-btn" id="generate-cover-btn" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
+                        <path d="M12 8L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M8 12L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span data-i18n="btnGenerateCover">生成封面</span>
+                </button>
+            </div>
 
             <!-- Cover Customization Floating Panel -->
             <div id="cover-custom-panel" class="cover-custom-panel" style="display: none;">
@@ -326,7 +362,7 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Application Modules -->
-    <script src="frontend/js/i18n.js?v=7"></script>
+    <script src="frontend/js/i18n.js?v=8"></script>
     <script src="frontend/js/theme.js?v=4"></script>
     <script src="frontend/js/config.js?v=4"></script>
     <script src="frontend/js/api.js?v=5"></script>
@@ -334,7 +370,7 @@
     <script src="frontend/js/pageManager.js?v=4"></script>
     <script src="frontend/js/exporter.js?v=4"></script>
     <script src="frontend/js/sessionManager.js?v=2"></script>
-    <script src="frontend/js/app.js?v=11"></script>
+    <script src="frontend/js/app.js?v=14"></script>
 </body>
 
 </html>

@@ -485,11 +485,13 @@ class UIController {
                     coverBtn.style.display = 'none';
                 }
 
-                // Success - show comic page and hint
+                // Success - show comic page and hint, hide empty state
                 const comicPage = document.getElementById('comic-page');
                 const editHint = document.querySelector('.edit-hint');
                 const previewContainer = document.querySelector('.preview-container');
+                const emptyState = document.getElementById('empty-state');
 
+                if (emptyState) emptyState.style.display = 'none';
                 if (comicPage) comicPage.style.display = 'flex';
                 if (editHint) editHint.style.display = 'block';
                 if (previewContainer) previewContainer.classList.add('has-content');
@@ -558,14 +560,20 @@ class UIController {
         if (hasImage) {
             const imageData = this.generatedPagesImages[pageIndex] || this.generatedPagesImages[String(pageIndex)];
             // Show toggle button
-            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'inline-flex';
+            if (this.toggleViewBtn) {
+                this.toggleViewBtn.style.display = 'inline-flex';
+                this.toggleViewBtn.classList.add('viewing');
+            }
 
             // Default to viewing image if it exists
             this.isViewingImage = true;
             this.displayImageDirectly(pageIndex);
         } else {
             // Hide toggle button
-            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'none';
+            if (this.toggleViewBtn) {
+                this.toggleViewBtn.style.display = 'none';
+                this.toggleViewBtn.classList.remove('viewing');
+            }
 
             this.isViewingImage = false;
             // Render sketch
@@ -814,8 +822,11 @@ class UIController {
 
             // After generation, we are viewing the image
             this.isViewingImage = true;
-            // Show toggle button
-            if (this.toggleViewBtn) this.toggleViewBtn.style.display = 'inline-flex';
+            // Show toggle button with active state
+            if (this.toggleViewBtn) {
+                this.toggleViewBtn.style.display = 'inline-flex';
+                this.toggleViewBtn.classList.add('viewing');
+            }
         }
     }
 
@@ -835,6 +846,15 @@ class UIController {
 
         // Toggle state
         this.isViewingImage = !this.isViewingImage;
+
+        // Update button visual state
+        if (this.toggleViewBtn) {
+            if (this.isViewingImage) {
+                this.toggleViewBtn.classList.add('viewing');
+            } else {
+                this.toggleViewBtn.classList.remove('viewing');
+            }
+        }
 
         // Perform flip animation
         const comicPage = document.getElementById('comic-page');
@@ -1126,22 +1146,6 @@ class UIController {
         const container = document.createElement('div');
         container.className = 'generated-image-container';
 
-        // Create version number overlay
-        const versionOverlay = document.createElement('div');
-        versionOverlay.className = 'version-overlay';
-        versionOverlay.innerText = versionNumber;
-        versionOverlay.style.cssText = `
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 72px;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.3);
-            pointer-events: none;
-            z-index: 10;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        `;
-
         // Create image
         const img = document.createElement('img');
         img.src = imageUrl;
@@ -1172,7 +1176,6 @@ class UIController {
             this.downloadImageFromUrl(imageUrl);
         };
 
-        container.appendChild(versionOverlay);
         container.appendChild(img);
         container.appendChild(downloadBtn);
         comicPage.appendChild(container);
@@ -1225,22 +1228,6 @@ class UIController {
         const container = document.createElement('div');
         container.className = 'generated-image-container';
 
-        // Create version number overlay
-        const versionOverlay = document.createElement('div');
-        versionOverlay.className = 'version-overlay';
-        versionOverlay.innerText = versionNumber;
-        versionOverlay.style.cssText = `
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 72px;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.3);
-            pointer-events: none;
-            z-index: 10;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        `;
-
         // Create image
         const img = document.createElement('img');
         img.src = imageUrl;
@@ -1271,7 +1258,6 @@ class UIController {
             this.downloadImageFromUrl(imageUrl);
         };
 
-        container.appendChild(versionOverlay);
         container.appendChild(img);
         container.appendChild(downloadBtn);
         comicPage.appendChild(container);
@@ -1933,6 +1919,13 @@ class UIController {
         const editHint = document.querySelector('.edit-hint');
         if (editHint) editHint.style.display = 'none';
 
+        // Show empty state temporarily (will be hidden if session has content)
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'flex';
+
+        const previewContainer = document.querySelector('.preview-container');
+        if (previewContainer) previewContainer.classList.remove('has-content');
+
         if (this.pageNav) this.pageNav.style.display = 'none';
         if (this.generateAllBtn) this.generateAllBtn.style.display = 'none';
         if (this.renderCurrentBtn) this.renderCurrentBtn.style.display = 'none';
@@ -1980,12 +1973,18 @@ class UIController {
         this.pageManager.setPages([]);
         this.jsonInput.value = '';
 
-        // Hide UI elements
+        // Hide UI elements and show empty state
         const comicPage = document.getElementById('comic-page');
         if (comicPage) comicPage.style.display = 'none';
 
         const editHint = document.querySelector('.edit-hint');
         if (editHint) editHint.style.display = 'none';
+
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'flex';
+
+        const previewContainer = document.querySelector('.preview-container');
+        if (previewContainer) previewContainer.classList.remove('has-content');
 
         this.pageNav.style.display = 'none';
         if (this.generateAllBtn) this.generateAllBtn.style.display = 'none';

@@ -79,8 +79,15 @@ const i18n = {
             socialMediaContent: '生成社媒文案',
 
             // Edit hint
-            editHint: '💡 点击任意面板可直接编辑内容',
+            editHint: '点击任意面板可直接编辑内容',
             doubleClickToEdit: '双击编辑脚本',
+
+            // Empty state
+            emptyStateTitle: '开始创作你的漫画',
+            emptyStateDesc: '在下方输入你的故事描述，AI 将为你生成精美的漫画分镜',
+            emptyStep1: '输入故事描述',
+            emptyStep2: 'AI 生成分镜',
+            emptyStep3: '渲染精美图像',
 
             // Status messages
             statusGenerating: '正在调用 {model}...',
@@ -136,6 +143,7 @@ const i18n = {
             btnCopyAll: '📋 复制全部',
             btnCopied: '✓ 已复制',
             btnDownloadImage: '下载图片',
+            btnCancel: '取消',
             statusGeneratingCover: '封面生成中...',
             modalCoverTitle: '漫画封面',
             coverCustomTitle: '自定义封面要求',
@@ -234,8 +242,15 @@ const i18n = {
             socialMediaContent: 'Generate Social Post',
 
             // Edit hint
-            editHint: '💡 Click any panel to edit content directly',
+            editHint: 'Click any panel to edit content directly',
             doubleClickToEdit: 'Double-click to edit script',
+
+            // Empty state
+            emptyStateTitle: 'Start Creating Your Comic',
+            emptyStateDesc: 'Describe your story below, and AI will generate beautiful comic panels for you',
+            emptyStep1: 'Describe Story',
+            emptyStep2: 'AI Generates',
+            emptyStep3: 'Render Images',
 
             // Status messages
             statusGenerating: 'Calling {model}...',
@@ -291,6 +306,7 @@ const i18n = {
             btnCopyAll: '📋 Copy All',
             btnCopied: '✓ Copied',
             btnDownloadImage: 'Download Image',
+            btnCancel: 'Cancel',
             statusGeneratingCover: 'Generating Cover...',
             modalCoverTitle: 'Comic Cover',
             coverCustomTitle: 'Custom Cover Requirements',
