@@ -91,9 +91,8 @@ Please strictly follow the provided Schema structure to generate the storyboard 
    - Descriptions should fully reflect the visual style of {self.comic_style}.
 
 3. **Dialogue Content (Very Important)**:
-   - **Rich Dialogue**: Comics should primarily tell stories through dialogue and spoken text. Include plenty of character conversations, exclamations, and verbal expressions.
+   - **Rich Dialogue**: Comics should primarily tell stories through dialogue and spoken text. 
    - **Speech Bubbles**: In the `text` field, use quotes to indicate character dialogue (e.g., "Character A: 'Hello, how are you?'"). This text will appear as speech bubbles in the comic.
-   - **Narration Boxes**: When needed, include narrator text using square brackets (e.g., "[Narrator: Meanwhile, in another city...]").
    - **Balance**: Prioritize dialogue over internal thoughts. Show emotions through what characters SAY and DO, not just what they think. Internal monologue should be minimal.
    - **Readable Comics**: Ensure readers can follow the story through dialogue alone. Each panel should have verbal content when characters are present.
 
