@@ -24,7 +24,6 @@ class ComicPage(BaseModel):
 class ComicScript(BaseModel):
     pages: List[ComicPage] = Field(description="漫画面板页面列表")
 
-
 class ComicService:
     """Comic script generator using OpenAI or Google API"""
     
