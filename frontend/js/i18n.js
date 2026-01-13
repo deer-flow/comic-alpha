@@ -44,6 +44,12 @@ const i18n = {
             generateBtn: '✨ AI 生成多页分镜',
             generating: '生成中...',
 
+            // Prompt optimization
+            optimizePromptTitle: '优化提示词',
+            statusOptimizeSuccess: '提示词已优化',
+            alertEmptyPrompt: '请先输入内容',
+            alertOptimizeFailed: '优化失败: {error}',
+
             // Comic styles
             styleDoraemon: '哆啦A梦风格',
             styleAmerican: '美式漫画风格',
@@ -206,6 +212,12 @@ const i18n = {
             comicLanguageLabel: 'Comic Language:',
             generateBtn: '✨ Generate Comic',
             generating: 'Generating...',
+
+            // Prompt optimization
+            optimizePromptTitle: 'Optimize Prompt',
+            statusOptimizeSuccess: 'Prompt optimized',
+            alertEmptyPrompt: 'Please enter content first',
+            alertOptimizeFailed: 'Optimization failed: {error}',
 
             // Comic styles
             styleDoraemon: 'Doraemon Style',

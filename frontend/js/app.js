@@ -63,6 +63,7 @@ class UIController {
         this.generateAllBtn = document.getElementById('generate-all-btn');
         this.prevBtn = document.getElementById('prev-btn');
         this.nextBtn = document.getElementById('next-btn');
+        this.optimizeBtn = document.getElementById('optimize-btn');
 
         // Status elements
         this.aiStatus = document.getElementById('ai-status');
@@ -78,7 +79,8 @@ class UIController {
 
         console.log('UIController elements initialized:', {
             renderCurrentBtn: !!this.renderCurrentBtn,
-            toggleViewBtn: !!this.toggleViewBtn
+            toggleViewBtn: !!this.toggleViewBtn,
+            optimizeBtn: !!this.optimizeBtn
         });
     }
 
@@ -355,6 +357,67 @@ class UIController {
 
         // Save to session state
         this.saveCurrentSessionState();
+    }
+
+    /**
+     * Optimize user's prompt using AI
+     */
+    async optimizePrompt() {
+        const apiKey = this.apiKeyInput.value.trim();
+        const googleApiKey = this.googleApiKeyInput.value.trim();
+        const prompt = this.promptInput.value.trim();
+        const comicStyle = this.comicStyleSelect.value;
+        const language = this.comicLanguageSelect.value;
+
+        // Validate inputs
+        if (!apiKey && !googleApiKey) {
+            alert(window.i18n.t('alertNoApiKey') || 'Please enter OpenAI API Key or Google API Key');
+            return;
+        }
+
+        if (!prompt) {
+            alert(window.i18n.t('alertEmptyPrompt') || 'Please enter content first');
+            return;
+        }
+
+        try {
+            // Update button state
+            this.optimizeBtn.disabled = true;
+            this.optimizeBtn.classList.add('loading');
+
+            const config = ConfigManager.getCurrentConfig();
+
+            // Call API
+            const result = await ComicAPI.optimizePrompt(
+                apiKey,
+                googleApiKey,
+                prompt,
+                config.baseUrl,
+                config.model,
+                comicStyle,
+                language
+            );
+
+            if (result.success && result.optimized_prompt) {
+                // Replace prompt with optimized version
+                this.promptInput.value = result.optimized_prompt;
+                
+                // Show success message (optional)
+                this.showStatus(window.i18n.t('statusOptimizeSuccess') || 'Prompt optimized', 'success');
+                setTimeout(() => this.hideStatus(), 2000);
+            } else {
+                throw new Error('Optimization failed');
+            }
+
+        } catch (error) {
+            console.error('Prompt optimization failed:', error);
+            this.showStatus(window.i18n.t('statusError', { error: error.message }), 'error');
+            alert(window.i18n.t('alertOptimizeFailed', { error: error.message }) || `Optimization failed: ${error.message}`);
+        } finally {
+            // Restore button state
+            this.optimizeBtn.disabled = false;
+            this.optimizeBtn.classList.remove('loading');
+        }
     }
 
     /**
@@ -2383,3 +2446,13 @@ UIController.prototype.displayGeneratedImage = function (imageUrl) {
     // Add to page
     document.body.appendChild(modal);
 };
+
+/**
+ * Global function for optimize prompt button
+ */
+function optimizePrompt() {
+    if (app) {
+        app.optimizePrompt();
+    }
+}
+

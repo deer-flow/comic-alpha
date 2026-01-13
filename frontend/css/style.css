@@ -1041,6 +1041,70 @@ label {
     }
 }
 
+/* Optimize Button (Magic Wand) */
+.prompt-wrapper .optimize-btn {
+    flex: 0 0 auto;
+    height: 32px;
+    width: 32px;
+    padding: 0 !important;
+    background: linear-gradient(135deg, #af52de 0%, #8e44ad 100%) !important;
+    border: none !important;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px !important;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 6px rgba(175, 82, 222, 0.2);
+    border-radius: 10px !important;
+    cursor: pointer;
+}
+
+.prompt-wrapper .optimize-btn:disabled {
+    background: var(--disabled-bg) !important;
+    color: var(--disabled-text) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+.prompt-wrapper .optimize-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(175, 82, 222, 0.35);
+}
+
+.prompt-wrapper .optimize-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 6px rgba(175, 82, 222, 0.25);
+}
+
+.prompt-wrapper .optimize-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.prompt-wrapper .optimize-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.prompt-wrapper .optimize-btn.loading svg {
+    visibility: hidden;
+}
+
+.prompt-wrapper .optimize-btn.loading::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
 /* Primary Run Button */
 .prompt-wrapper .run-btn {
     flex: 0 0 auto;
@@ -2122,3 +2186,64 @@ button.loading .spinner {
         justify-content: flex-end;
     }
 }
+
+/* Optimize Button Styles */
+.prompt-wrapper .optimize-btn {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    padding: 0 !important;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%) !important;
+    border: none !important;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.2);
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.prompt-wrapper .optimize-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #FF5252 0%, #FF3333 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+}
+
+.prompt-wrapper .optimize-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.25);
+}
+
+.prompt-wrapper .optimize-btn:disabled {
+    background: var(--disabled-bg) !important;
+    color: var(--disabled-text) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+.prompt-wrapper .optimize-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.prompt-wrapper .optimize-btn.loading {
+    pointer-events: none;
+}
+
+.prompt-wrapper .optimize-btn.loading svg {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+

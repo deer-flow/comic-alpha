@@ -279,6 +279,11 @@
             <div class="prompt-input-row">
                 <textarea id="prompt-input" data-i18n="promptPlaceholder"
                     placeholder="描述你想要的漫画内容，例如：生成一个关于小明学习编程的故事"></textarea>
+                <button onclick="optimizePrompt()" class="optimize-btn" id="optimize-btn" data-i18n-title="optimizePromptTitle" title="优化提示词">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 4V2M15 16V14M8 9H10M20 9H22M17.8 11.8L19 13M17.8 6.2L19 5M3 21L12 12M12.2 6.2L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <button onclick="generateWithAI()" class="run-btn" id="run-btn" title="Run">
                     <span class="btn-text">Run</span>
                     <span class="shortcut-hint">⌘↵</span>

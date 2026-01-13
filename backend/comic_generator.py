@@ -60,7 +60,7 @@ def generate_social_media_image_core(
                     contents.append(img)
                 elif img_str.startswith("/backend/static/images/"):
                     logger.info(f"Processing reference image: {img_str}")
-                    img_str = img_str.replace("/backend", "")
+                    img_str = img_str.replace("/backend/", "")
                     img = Image.open(f"{os.getcwd()}/{img_str}")
                     contents.append(img)
                 elif img_str.startswith('data:image'):
@@ -90,6 +90,7 @@ def generate_social_media_image_core(
                 contents=contents,
                 config=GenerateContentConfig(
                     response_modalities=['TEXT', 'IMAGE'],
+                    temperature=0.2,
                     image_config=ImageConfig(
                         aspect_ratio=aspect_ratio,
                         image_size=image_size,

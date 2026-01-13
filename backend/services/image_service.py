@@ -53,12 +53,12 @@ class ImageService:
                 elif isinstance(prev_page, str):
                     reference_images.append(prev_page)
         
-        # Add current page sketch as last reference
-        if reference_img:
-            if isinstance(reference_img, str):
-                reference_images.append(reference_img)
-            elif isinstance(reference_img, list):
-                reference_images.extend(reference_img)
+        # # Add current page sketch as last reference
+        # if reference_img:
+        #     if isinstance(reference_img, str):
+        #         reference_images.append(reference_img)
+        #     elif isinstance(reference_img, list):
+        #         reference_images.extend(reference_img)
         
         # Use reference_images if we have any, otherwise None
         final_reference = reference_images if reference_images else None
@@ -135,6 +135,8 @@ class ImageService:
     @staticmethod
     def _convert_page_to_prompt(page_data: Dict[str, Any], comic_style: str = 'doraemon', language: str = 'en') -> str:
         """Convert page data to image generation prompt"""
+        import json
+        
         panels = []
         if 'rows' in page_data:
             for i, row in enumerate(page_data['rows'], 1):
@@ -154,7 +156,8 @@ class ImageService:
         }
         target_lang = language_map.get(language, 'English')
 
-        prompt_template = """Using the style of {comic_style}, convert the storyline in each panel of the reference image into corresponding comic content. All text in the comic, including titles and speech bubbles, MUST be in {target_lang}.
+        # Main prompt content
+        prompt_content = """Using the style of {comic_style}, convert the storyline in each panel of the reference image into corresponding comic content. All text in the comic, including titles and speech bubbles, MUST be in {target_lang}.
 
 # Content:
 
@@ -162,37 +165,49 @@ class ImageService:
 {title}
 
 ## Panels
-{panels}
+{panels}"""
 
-# Requirements:
-- The content of each panel should avoid being overly complex.
-- Maintain consistency in characters and scenes.
-- Preserve the layout and proportions of the comic.
+        # Requirements section (positive guidance only)
+        requirements_content = """- Maintain consistency in characters and scenes.
 - The image should be colorful and vibrant.
-- Do not show panel index in the content.
 - Include speech bubbles with short, clear dialogue to help tell the story.
-- Keep dialogue concise to avoid cluttering the image.
 - Ensure text is legible and spelled correctly.
 - All dialogue and titles MUST be in {target_lang}.
 - Display the title only once, typically at the top center of the comic page.
-- Do not duplicate the title in multiple locations.
 - Maintain consistent and uniform margins around the entire comic page.
 - Ensure equal spacing on all sides (top, bottom, left, right) for a professional appearance.
 - The comic title should use a {comic_style}-style font that matches the overall comic aesthetic.
-- Use fonts that properly support {target_lang} characters to prevent text corruption.
-- Ensure all text is correctly encoded and displayed without mojibake or garbled characters.
+- Use fonts that properly support {target_lang} characters.
+- Ensure all text is correctly encoded and displayed clearly.
 - Text should be clear, sharp, and properly rendered in both speech bubbles and titles.
-- Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. These may also include user-provided reference images for maintaining character, prop, or item consistency. You MUST carry over the exact facial features, hair styles, and **identical clothing/outfits**. Do not change what they are wearing unless the script explicitly requires a costume change.
-- Layout Reference: The last provided image is a sketch. Replicate its panel structure.
-"""
+- Character Consistency: Use the first provided images (previous pages) as the definitive source for character appearances. These may also include user-provided reference images for maintaining character, prop, or item consistency. Carry over the exact facial features, hair styles, and identical clothing/outfits."""
+
+        # Negative prompt (all negative constraints)
+        negative_prompt = "overly complex panels, complex panel content, inconsistent characters, distorted proportions, dull colors, panel indices visible, panel numbers shown, cluttered dialogue, verbose dialogue, illegible text, misspelled words, duplicated titles, multiple title locations, uneven margins, mismatched fonts, text corruption, mojibake, garbled characters, blurry text, character appearance changes, incorrect clothing, clothing changes without script requirement, layout deviation from sketch, costume changes"
         
-        final_prompt = prompt_template.format(
+        # Format the content
+        formatted_prompt = prompt_content.format(
             comic_style=comic_style, 
             title=page_data.get('title', ''),
             panels="\n".join(panels),
             target_lang=target_lang
         )
-        return final_prompt.strip()
+        
+        formatted_requirements = requirements_content.format(
+            comic_style=comic_style,
+            target_lang=target_lang
+        )
+        
+        # Create structured JSON
+        img_prompt = {
+            "image_generation_data": {
+                "prompt": formatted_prompt.strip(),
+                "requirements": formatted_requirements.strip(),
+                "negative_prompt": negative_prompt
+            }
+        }
+        
+        return json.dumps(img_prompt, ensure_ascii=False)
 
     @staticmethod
     def _create_cover_prompt(comic_style: str, language: str = 'en', custom_requirements: str = '') -> str:

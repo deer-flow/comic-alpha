@@ -216,6 +216,48 @@ class ComicAPI {
             throw error;
         }
     }
+
+    /**
+     * Optimize user's simple prompt into detailed comic description
+     * @param {string} apiKey - OpenAI API key (optional)
+     * @param {string} googleApiKey - Google API key (optional, preferred)
+     * @param {string} prompt - User's simple prompt
+     * @param {string} baseUrl - OpenAI API base URL
+     * @param {string} model - Model name
+     * @param {string} comicStyle - Comic style
+     * @param {string} language - Language
+     * @returns {Promise<Object>} Optimization result
+     */
+    static async optimizePrompt(apiKey, googleApiKey, prompt, baseUrl, model, comicStyle = 'doraemon', language = 'zh') {
+        try {
+            const response = await fetch(`${API_BASE_URL}/optimize-prompt`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    api_key: apiKey,
+                    google_api_key: googleApiKey,
+                    prompt: prompt,
+                    base_url: baseUrl,
+                    model: model,
+                    comic_style: comicStyle,
+                    language: language
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `API request failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Prompt optimization failed:', error);
+            throw error;
+        }
+    }
 }
 
 // Export for use in other modules
