@@ -1041,69 +1041,7 @@ label {
     }
 }
 
-/* Optimize Button (Magic Wand) */
-.prompt-wrapper .optimize-btn {
-    flex: 0 0 auto;
-    height: 32px;
-    width: 32px;
-    padding: 0 !important;
-    background: linear-gradient(135deg, #af52de 0%, #8e44ad 100%) !important;
-    border: none !important;
-    color: white !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px !important;
-    font-weight: 600;
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 2px 6px rgba(175, 82, 222, 0.2);
-    border-radius: 10px !important;
-    cursor: pointer;
-}
-
-.prompt-wrapper .optimize-btn:disabled {
-    background: var(--disabled-bg) !important;
-    color: var(--disabled-text) !important;
-    cursor: not-allowed;
-    opacity: 0.7;
-    box-shadow: none;
-}
-
-.prompt-wrapper .optimize-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(175, 82, 222, 0.35);
-}
-
-.prompt-wrapper .optimize-btn:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 2px 6px rgba(175, 82, 222, 0.25);
-}
-
-.prompt-wrapper .optimize-btn svg {
-    width: 16px;
-    height: 16px;
-}
-
-.prompt-wrapper .optimize-btn.loading {
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.prompt-wrapper .optimize-btn.loading svg {
-    visibility: hidden;
-}
-
-.prompt-wrapper .optimize-btn.loading::before {
-    content: '';
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
+/* Note: Magic Wand Button styles moved to bottom of file */
 
 /* Primary Run Button */
 .prompt-wrapper .run-btn {
@@ -2187,63 +2125,232 @@ button.loading .spinner {
     }
 }
 
-/* Optimize Button Styles */
+/* ========================================
+   Magic Wand Button - Enhanced Styles
+   ======================================== */
+
+/* AI Color Variables */
+.prompt-wrapper .optimize-btn {
+    --magic-primary: #7C3AED;      /* Purple */
+    --magic-secondary: #3B82F6;    /* Blue */
+    --magic-accent: #10B981;       /* Emerald */
+    --magic-gold: #F59E0B;         /* Gold for stars */
+    --magic-glow: rgba(124, 58, 237, 0.4);
+}
+
 .prompt-wrapper .optimize-btn {
     flex: 0 0 auto;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     padding: 0 !important;
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%) !important;
+    background: linear-gradient(135deg, var(--magic-primary) 0%, var(--magic-secondary) 100%) !important;
     border: none !important;
     color: white !important;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px !important;
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.2);
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 8px var(--magic-glow);
     cursor: pointer;
     margin-left: 8px;
+    position: relative;
+    overflow: visible;
 }
 
-.prompt-wrapper .optimize-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #FF5252 0%, #FF3333 100%) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+/* Glow effect on dark mode */
+[data-theme="dark"] .prompt-wrapper .optimize-btn {
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.3), 0 2px 8px var(--magic-glow);
 }
 
-.prompt-wrapper .optimize-btn:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.25);
+/* Hover state - Shake animation */
+.prompt-wrapper .optimize-btn:hover:not(:disabled):not(.loading) {
+    background: linear-gradient(135deg, #6D28D9 0%, #2563EB 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--magic-glow);
 }
 
+.prompt-wrapper .optimize-btn:hover:not(:disabled):not(.loading) .wand-icon {
+    animation: magic-shake 0.5s ease-in-out infinite;
+}
+
+.prompt-wrapper .optimize-btn:hover:not(:disabled):not(.loading) .sparkle {
+    animation: sparkle-twinkle 0.8s ease-in-out infinite;
+}
+
+.prompt-wrapper .optimize-btn:hover:not(:disabled):not(.loading) .sparkle-2 {
+    animation-delay: 0.2s;
+}
+
+.prompt-wrapper .optimize-btn:hover:not(:disabled):not(.loading) .sparkle-3 {
+    animation-delay: 0.4s;
+}
+
+/* Click/Active state - Pulse burst */
+.prompt-wrapper .optimize-btn:active:not(:disabled):not(.loading) {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 2px 8px var(--magic-glow);
+}
+
+.prompt-wrapper .optimize-btn:active:not(:disabled):not(.loading)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: click-burst 0.4s ease-out forwards;
+}
+
+/* Disabled state */
 .prompt-wrapper .optimize-btn:disabled {
     background: var(--disabled-bg) !important;
     color: var(--disabled-text) !important;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.5;
     box-shadow: none;
 }
 
-.prompt-wrapper .optimize-btn svg {
-    width: 16px;
-    height: 16px;
+.prompt-wrapper .optimize-btn:disabled .sparkle {
+    opacity: 0.3;
 }
 
+/* Icon styling */
+.prompt-wrapper .optimize-btn .wand-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.prompt-wrapper .optimize-btn .wand-body {
+    stroke-width: 2;
+}
+
+.prompt-wrapper .optimize-btn .sparkle {
+    opacity: 0.9;
+    transform-origin: center;
+}
+
+/* Magic Loader - Hidden by default */
+.prompt-wrapper .optimize-btn .magic-loader {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    display: none;
+}
+
+.prompt-wrapper .optimize-btn .orbit-star {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--magic-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--magic-gold), 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.prompt-wrapper .optimize-btn .orbit-star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Loading state */
 .prompt-wrapper .optimize-btn.loading {
     pointer-events: none;
+    background: linear-gradient(135deg, #5B21B6 0%, #1D4ED8 100%) !important;
 }
 
-.prompt-wrapper .optimize-btn.loading svg {
-    animation: rotate 1s linear infinite;
+.prompt-wrapper .optimize-btn.loading .wand-icon {
+    display: none;
 }
 
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
+.prompt-wrapper .optimize-btn.loading .magic-loader {
+    display: block;
+}
+
+.prompt-wrapper .optimize-btn.loading .star-1 {
+    animation: orbit-star 1.2s linear infinite;
+}
+
+.prompt-wrapper .optimize-btn.loading .star-2 {
+    animation: orbit-star 1.2s linear infinite;
+    animation-delay: -0.4s;
+}
+
+.prompt-wrapper .optimize-btn.loading .star-3 {
+    animation: orbit-star 1.2s linear infinite;
+    animation-delay: -0.8s;
+}
+
+/* ========================================
+   Magic Wand Animations
+   ======================================== */
+
+/* Shake animation for hover */
+@keyframes magic-shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    75% { transform: rotate(8deg); }
+}
+
+/* Sparkle twinkle effect */
+@keyframes sparkle-twinkle {
+    0%, 100% {
+        opacity: 0.9;
+        transform: scale(1);
     }
-    to {
-        transform: rotate(360deg);
+    50% {
+        opacity: 0.5;
+        transform: scale(0.7);
     }
+}
+
+/* Click burst effect */
+@keyframes click-burst {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Orbiting stars for loading */
+@keyframes orbit-star {
+    0% {
+        transform: rotate(0deg) translateX(10px) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: rotate(360deg) translateX(10px) rotate(-360deg);
+        opacity: 1;
+    }
+}
+
+/* Star trail effect */
+.prompt-wrapper .optimize-btn.loading .orbit-star::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--magic-gold), transparent);
+    left: -12px;
+    top: 2px;
+    border-radius: 1px;
+    opacity: 0.6;
 }
 
