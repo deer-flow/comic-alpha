@@ -258,6 +258,48 @@ class ComicAPI {
             throw error;
         }
     }
+
+    /**
+     * Generate a session title based on comic prompt and data
+     * @param {string} apiKey - OpenAI API key (optional)
+     * @param {string} googleApiKey - Google API key (optional, preferred)
+     * @param {string} prompt - User's comic prompt
+     * @param {Object} comicData - Generated comic data (optional)
+     * @param {string} baseUrl - OpenAI API base URL
+     * @param {string} model - Model name
+     * @param {string} language - Language
+     * @returns {Promise<Object>} Title generation result
+     */
+    static async generateSessionTitle(apiKey, googleApiKey, prompt, comicData = null, baseUrl = 'https://api.openai.com/v1', model = 'gpt-4o-mini', language = 'zh') {
+        try {
+            const response = await fetch(`${API_BASE_URL}/generate-session-title`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    api_key: apiKey,
+                    google_api_key: googleApiKey,
+                    prompt: prompt,
+                    comic_data: comicData,
+                    base_url: baseUrl,
+                    model: model,
+                    language: language
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `API request failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Session title generation failed:', error);
+            throw error;
+        }
+    }
 }
 
 // Export for use in other modules

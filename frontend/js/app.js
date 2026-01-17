@@ -503,6 +503,9 @@ class UIController {
             this.showStatus(window.i18n.t('statusSuccess', { count: result.page_count }), 'success');
             setTimeout(() => this.hideStatus(), 3000);
 
+            // Auto-generate session title (non-blocking)
+            this.generateSessionTitle(prompt, result, apiKey, googleApiKey, language);
+
         } catch (error) {
             console.error('AI generation failed:', error);
             this.showStatus(window.i18n.t('statusError', { error: error.message }), 'error');
@@ -519,6 +522,57 @@ class UIController {
 
             // Save session state
             this.saveCurrentSessionState();
+        }
+    }
+
+    /**
+     * Auto-generate session title based on prompt and comic data
+     * This runs in the background and won't block the UI
+     * @param {string} prompt - User's prompt
+     * @param {Object} comicData - Generated comic data
+     * @param {string} apiKey - OpenAI API key
+     * @param {string} googleApiKey - Google API key
+     * @param {string} language - Comic language
+     */
+    async generateSessionTitle(prompt, comicData, apiKey, googleApiKey, language) {
+        try {
+            // Check if current session already has a custom name (not default "session X")
+            const currentSession = this.sessionManager.getCurrentSession();
+            if (!currentSession) return;
+
+            // Only auto-generate if the session has a default name like "session 1", "session 2", etc.
+            const defaultNamePattern = /^session \d+$/i;
+            if (!defaultNamePattern.test(currentSession.name)) {
+                console.log('Session already has a custom name, skipping auto-generation');
+                return;
+            }
+
+            const config = ConfigManager.getCurrentConfig();
+
+            // Call API to generate title
+            const result = await ComicAPI.generateSessionTitle(
+                apiKey,
+                googleApiKey,
+                prompt,
+                comicData,
+                config.baseUrl,
+                config.model,
+                language
+            );
+
+            if (result.success && result.title) {
+                // Update session name
+                this.sessionManager.updateCurrentSession({ name: result.title });
+
+                // Update UI
+                this.updateSessionSelector();
+
+                console.log(`Session title auto-generated: ${result.title}`);
+            }
+        } catch (error) {
+            // Title generation failure should not affect the main workflow
+            console.error('Session title auto-generation failed:', error);
+            // Silently fail - user can still use the session with default name
         }
     }
 
